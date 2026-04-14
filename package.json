@@ -1,0 +1,39 @@
+{
+  "name": "blog-backend-for-cms",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "setup": "node scripts/setup.js",
+    "dev": "nodemon src/server.js",
+    "migrate": "sequelize-cli db:migrate",
+    "reset": "npx sequelize-cli db:migrate:undo:all --config src/config/config.cjs && node scripts/setup.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bhaskarshankar488/Blog-backend-for-cms.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bhaskarshankar488/Blog-backend-for-cms/issues"
+  },
+  "homepage": "https://github.com/bhaskarshankar488/Blog-backend-for-cms#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "connect-mongo": "^6.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "joi": "^18.1.2",
+    "mongoose": "^9.4.1",
+    "morgan": "^1.10.1",
+    "mysql2": "^3.22.0",
+    "nodemon": "^3.1.14",
+    "sequelize": "^6.37.8"
+  }
+}

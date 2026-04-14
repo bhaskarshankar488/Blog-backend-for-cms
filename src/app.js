@@ -1,0 +1,31 @@
+import express from "express";
+import cors from "cors";
+import morgan from "morgan";
+import userRoutes from "./routes/user.routes.js";
+import loginRoutes from "./routes/auth.routes.js";
+
+
+import { sessionMiddleware } from "./config/session.js";
+
+const app = express();
+
+app.use(sessionMiddleware);
+// Middlewares
+app.use(express.json());
+
+app.use(cors({ // or your frontend URL
+  credentials: true
+}));
+app.use(morgan("dev"));
+
+// Test route
+app.get("/", (req, res) => {
+  res.send("API is running 🚀");
+});
+
+// Routes
+app.use("/api/users", userRoutes);
+app.use("/api/auth", loginRoutes);
+
+
+export default app;
