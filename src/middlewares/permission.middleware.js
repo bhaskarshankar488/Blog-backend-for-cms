@@ -1,7 +1,5 @@
-// middlewares/permission.middleware.js
-
 import { PERMISSIONS } from "../config/permissions.js";
-import { serviceError } from "../utils/serviceResponse.js";
+import { errorResponse } from "../utils/responseHandler.js";
 
 export const checkPermission = (module, action, options = {}) => {
   return async (req, res, next) => {
@@ -10,7 +8,7 @@ export const checkPermission = (module, action, options = {}) => {
 
       // 🔒 Auth Check
       if (!user) {
-        return serviceError(res, "User not authenticated", 401);
+        return errorResponse(res, "User not authenticated", 401);
       }
 
       const role = user.role?.toLowerCase();
@@ -18,35 +16,19 @@ export const checkPermission = (module, action, options = {}) => {
 
       // 🔒 Role Permission Check
       if (!modulePermissions.includes(action)) {
-        return serviceError(
+        return errorResponse(
           res,
           `Forbidden: ${role} cannot ${action} ${module}`,
           403
         );
       }
 
-      // 🔒 Ownership Check (optional)
-      if (options.checkOwner && options.model) {
-        const record = await options.model.findByPk(req.params.id);
-
-        if (!record) {
-          return serviceError(res, "Resource not found", 404);
-        }
-
-        if (role !== "admin" && record.userId !== user.id) {
-          return serviceError(res, "Not your resource", 403);
-        }
-
-        req.record = record; // pass to controller
-      }
-
-      // Attach user to request
       req.user = user;
 
       next();
     } catch (err) {
       console.error("Permission Middleware Error:", err);
-      return serviceError(res, "Permission error", 500);
+      return errorResponse(res, "Permission error", 500);
     }
   };
 };
