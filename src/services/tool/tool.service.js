@@ -20,7 +20,9 @@ export const getTools = async (search) => {
     ? { name: { $regex: search, $options: "i" } }
     : {};
 
-  const tools = await Tool.find(query).limit(50);
+   const tools = await Tool.find(query)
+    .select("name slug image brand") // ✅ only needed fields
+    .limit(20); // ✅ limit for performance
 
   return serviceSuccess(tools, "Tools fetched successfully");
 };

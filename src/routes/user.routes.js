@@ -6,7 +6,7 @@ import {
   deleteUser,
   updateUserStatus,
   getUsers,
-  getUserById
+  getUserById,
 } from "../controllers/user.controller.js";
 
 import { validate } from "../middlewares/validate.middleware.js";
@@ -87,5 +87,6 @@ router.get(
   checkPermission("users", "read"),
   getUsers
 );
+
 
 export default router;

@@ -31,3 +31,15 @@ export const logoutUser = async (req, res) => {
     return errorResponse(res, error.message, 500);
   }
 };
+
+export const getMe = (req, res) => {
+  try {
+    if (!req.session.user) {
+      return errorResponse(res, "Not authenticated", 401);
+    }
+
+    return successResponse(res, "User fetched successfully", req.session.user);
+  } catch (error) {
+    return errorResponse(res, "Failed to fetch user", 500);
+  }
+};

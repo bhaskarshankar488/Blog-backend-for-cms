@@ -34,15 +34,11 @@ const pageSchema = new mongoose.Schema(
       },
     ],
 
-   contentBlocks: [
-  {
-    type: {
+    // 🔥 NEW CONTENT FIELD
+    content: {
       type: String,
-      required: true
+      default: "",
     },
-    value: mongoose.Schema.Types.Mixed
-  }
-],
 
     status: {
       type: String,

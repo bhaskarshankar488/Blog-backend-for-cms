@@ -108,3 +108,12 @@ export const previewPageBySlug = async (slug) => {
 
   return serviceSuccess(response, "Preview page fetched successfully");
 };
+
+// GET ALL PAGES (ADMIN)
+export const getPages = async () => {
+  const pages = await Page.find()
+    .select("title slug status createdAt updatedAt") 
+    .sort({ createdAt: -1 });
+
+  return serviceSuccess(pages, "Pages fetched successfully");
+};

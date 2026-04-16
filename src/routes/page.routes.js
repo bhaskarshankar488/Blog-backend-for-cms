@@ -6,7 +6,8 @@ import {
   deletePage,
   updatePageStatus,
   getPageBySlug,
-  previewPage
+  previewPage,
+  getPages
 } from "../controllers/page.controller.js";
 
 import { validate } from "../middlewares/validate.middleware.js";
@@ -55,6 +56,14 @@ router.patch(
   validate(updateStatusSchema),
   updatePageStatus
 );
+
+router.get(
+  "/",
+  isAuthenticated,
+  checkPermission("pages", "read"),
+  getPages
+);
+
 router.get("/preview/:slug", previewPage);
 
 router.get("/:slug", getPageBySlug);

@@ -63,3 +63,13 @@ export const previewPage = async (req, res) => {
     return errorResponse(res, error.message, error.status || 500);
   }
 };
+
+export const getPages = async (req, res) => {
+  try {
+    const result = await pageService.getPages();
+
+    return successResponse(res, result.message, result.data);
+  } catch (error) {
+    return errorResponse(res, error.message, error.status || 500);
+  }
+};

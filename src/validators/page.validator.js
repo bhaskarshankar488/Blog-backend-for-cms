@@ -29,13 +29,7 @@ export const createPageSchema = Joi.object({
       answer: Joi.string().required(),
     })
   ),
-
-  contentBlocks: Joi.array().items(
-    Joi.object({
-      type: Joi.string().required(),
-      value: Joi.any(),
-    })
-  ),
+content: Joi.string().allow("").optional(),
 
   status: Joi.string().valid("draft", "published", "unpublished"),
 });

@@ -92,3 +92,4 @@ export const getUserById = async (req, res) => {
     return errorResponse(res, error.message, error.status || 500);
   }
 };
+
