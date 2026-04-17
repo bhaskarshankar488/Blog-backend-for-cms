@@ -49,3 +49,13 @@ export const deleteTool = async (id) => {
 
   return serviceSuccess(null, "Tool deleted successfully");
 };
+
+export const getToolById = async (id) => {
+  const tool = await Tool.findById(id);
+
+  if (!tool) {
+    throw serviceError("Tool not found", 404);
+  }
+
+  return serviceSuccess(tool, "Tool fetched successfully");
+};

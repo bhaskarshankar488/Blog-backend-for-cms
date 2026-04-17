@@ -58,3 +58,8 @@ export const updateStatusSchema = Joi.object({
     .valid("draft", "published", "unpublished")
     .required(),
 });
+
+// PARAM VALIDATION
+export const pageIdSchema = Joi.object({
+  id: objectId.required(),
+});

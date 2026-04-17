@@ -73,3 +73,13 @@ export const getPages = async (req, res) => {
     return errorResponse(res, error.message, error.status || 500);
   }
 };
+
+export const getPageById = async (req, res) => {
+  try {
+    const result = await pageService.getPageById(req.params.id);
+
+    return successResponse(res, result.message, result.data);
+  } catch (error) {
+    return errorResponse(res, error.message, error.status || 500);
+  }
+};

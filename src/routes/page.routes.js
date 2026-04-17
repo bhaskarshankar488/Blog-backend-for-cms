@@ -7,7 +7,8 @@ import {
   updatePageStatus,
   getPageBySlug,
   previewPage,
-  getPages
+  getPages,
+  getPageById
 } from "../controllers/page.controller.js";
 
 import { validate } from "../middlewares/validate.middleware.js";
@@ -17,7 +18,8 @@ import { checkPermission } from "../middlewares/permission.middleware.js";
 import {
   createPageSchema,
   updatePageSchema,
-  updateStatusSchema
+  updateStatusSchema,
+  pageIdSchema
 } from "../validators/page.validator.js";
 
 const router = express.Router();
@@ -62,6 +64,15 @@ router.get(
   isAuthenticated,
   checkPermission("pages", "read"),
   getPages
+);
+
+// GET PAGE BY ID (ADMIN)
+router.get(
+  "/id/:id",
+  isAuthenticated,
+  checkPermission("pages", "read"),
+  validate(pageIdSchema, "params"),
+  getPageById
 );
 
 router.get("/preview/:slug", previewPage);

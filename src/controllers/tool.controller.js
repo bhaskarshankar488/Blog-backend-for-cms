@@ -36,3 +36,14 @@ export const deleteTool = async (req, res) => {
     return errorResponse(res, error.message, error.status || 500);
   }
 };
+
+export const getToolById = async (req, res) => {
+  try {
+    const result = await toolService.getToolById(req.params.id);
+
+    return successResponse(res, result.message, result.data);
+  } catch (error) {
+    return errorResponse(res, error.message, error.status || 500);
+  }
+};
+

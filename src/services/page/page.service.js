@@ -117,3 +117,13 @@ export const getPages = async () => {
 
   return serviceSuccess(pages, "Pages fetched successfully");
 };
+
+export const getPageById = async (id) => {
+  const page = await Page.findById(id);
+
+  if (!page) {
+    throw serviceError("Page not found", 404);
+  }
+
+  return serviceSuccess(page, "Page fetched successfully");
+};

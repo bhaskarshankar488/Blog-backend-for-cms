@@ -1,5 +1,7 @@
 import express from "express";
-import { createTool, getTools, updateTool, deleteTool} from "../controllers/tool.controller.js";
+import { createTool, getTools, updateTool, deleteTool,
+  getToolById
+} from "../controllers/tool.controller.js";
 
 import { validate } from "../middlewares/validate.middleware.js";
 import { isAuthenticated } from "../middlewares/auth.middleware.js";
@@ -48,6 +50,14 @@ router.delete(
   checkPermission("tools", "delete"),
   validate(toolIdSchema, "params"),
   deleteTool
+);
+
+router.get(
+  "/:id",
+  isAuthenticated,
+  checkPermission("tools", "read"),
+  validate(toolIdSchema, "params"),
+  getToolById
 );
 
 export default router;
