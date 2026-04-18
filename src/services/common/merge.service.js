@@ -14,6 +14,7 @@ export const mergeTools = async (page) => {
       name: tool.name,
       image: tool.image,
       brand: tool.brand,
+      tags: tool.tags,
       description: t.customDescription || tool.globalDescription,
       rating: t.rating,
       position: index + 1,

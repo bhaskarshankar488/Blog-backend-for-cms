@@ -20,6 +20,17 @@ const toolSchema = new mongoose.Schema(
     brand: String,
 
     globalDescription: String,
+
+    // ✅ FIXED POSITION
+    tags: {
+      type: [String],
+      validate: {
+        validator: function (val) {
+          return val.length <= 3;
+        },
+        message: "Maximum 3 keywords allowed",
+      },
+    },
   },
   {
     timestamps: true,

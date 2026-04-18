@@ -8,6 +8,10 @@ export const createToolSchema = Joi.object({
 
   image: Joi.string().allow("", null),
   brand: Joi.string().allow("", null),
+  tags: Joi.array()
+  .items(Joi.string())
+  .max(3)
+  .optional(),
   globalDescription: Joi.string().allow("", null),
 });
 // Mongo ObjectId validation
@@ -25,6 +29,10 @@ export const updateToolSchema = Joi.object({
   image: Joi.string().allow("", null),
   brand: Joi.string().allow("", null),
   globalDescription: Joi.string().allow("", null),
+  tags: Joi.array()
+  .items(Joi.string())
+  .max(3)
+  .optional(),
 });
 
 export const getToolsSchema = Joi.object({
