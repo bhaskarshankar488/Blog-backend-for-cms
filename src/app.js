@@ -7,6 +7,7 @@ import toolRoutes from "./routes/tool.routes.js";
 import pageRoutes from "./routes/page.routes.js"; 
 import revalidateRoutes from "./routes/revalidate.routes.js";  
 import { sessionMiddleware } from "./config/session.js";
+import dotenv from "dotenv";
 
 const app = express();
 
@@ -15,7 +16,7 @@ app.use(sessionMiddleware);
 app.use(express.json());
 
 app.use(cors({ // or your frontend URL
-  origin: "http://localhost:5173",
+  origin: process.env.FRONTEND_URL_CMS,
   credentials: true
 }));
 app.use(morgan("dev"));

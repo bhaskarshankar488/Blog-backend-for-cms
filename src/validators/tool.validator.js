@@ -13,6 +13,13 @@ export const createToolSchema = Joi.object({
   .max(3)
   .optional(),
   globalDescription: Joi.string().allow("", null),
+   link: Joi.string()
+    .uri()
+    .required()
+    .messages({
+      "string.empty": "Link is required",
+      "string.uri": "Link must be a valid URL",
+    }),
 });
 // Mongo ObjectId validation
 const objectId = Joi.string().regex(/^[0-9a-fA-F]{24}$/);
@@ -33,6 +40,13 @@ export const updateToolSchema = Joi.object({
   .items(Joi.string())
   .max(3)
   .optional(),
+   link: Joi.string()
+    .uri()
+    .required()
+    .messages({
+      "string.empty": "Link is required",
+      "string.uri": "Link must be a valid URL",
+    }),
 });
 
 export const getToolsSchema = Joi.object({

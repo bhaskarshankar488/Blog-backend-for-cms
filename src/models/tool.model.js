@@ -15,13 +15,29 @@ const toolSchema = new mongoose.Schema(
       index: true,
     },
 
-    image: String,
+    image: {
+      type: String,
+      default: "",
+    },
 
-    brand: String,
+    brand: {
+      type: String,
+      required: true,
+      trim: true,
+    },
 
-    globalDescription: String,
+    link: {
+      type: String,
+      required: true,
+      trim: true,
+    },
 
-    // ✅ FIXED POSITION
+    globalDescription: {
+      type: String,
+      default: "",
+    },
+
+    // ✅ Max 3 tags only
     tags: {
       type: [String],
       validate: {
@@ -30,6 +46,7 @@ const toolSchema = new mongoose.Schema(
         },
         message: "Maximum 3 keywords allowed",
       },
+      default: [],
     },
   },
   {

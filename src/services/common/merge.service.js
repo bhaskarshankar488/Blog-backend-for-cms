@@ -1,4 +1,5 @@
 import { Tool } from "../../models/tool.model.js";
+import { slugify } from "../../utils/slugify.js";
 
 export const mergeTools = async (page) => {
   const toolIds = page.tools.map((t) => t.toolId);
@@ -12,12 +13,15 @@ export const mergeTools = async (page) => {
 
     return {
       name: tool.name,
+      slug: slugify(tool.name),
       image: tool.image,
       brand: tool.brand,
       tags: tool.tags,
-      description: t.customDescription || tool.globalDescription,
+      customDescription: t.customDescription || tool.globalDescription,
+      reviews: t.reviews || 100, 
+      position: t.position || index + 1,
       rating: t.rating,
-      position: index + 1,
+      link: tool?.link || "#"
     };
   });
 };

@@ -20,6 +20,8 @@ export const createPageSchema = Joi.object({
       toolId: objectId.required(),
       customDescription: Joi.string().allow(""),
       rating: Joi.number().min(0).max(5),
+      reviews: Joi.number().optional(),
+      position: Joi.number().optional()
     })
   ),
 

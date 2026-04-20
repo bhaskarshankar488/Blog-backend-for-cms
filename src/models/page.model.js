@@ -24,6 +24,11 @@ const pageSchema = new mongoose.Schema(
         },
         customDescription: String,
         rating: Number,
+        reviews: {
+            type: Number,
+            default: 0
+          },
+         position: Number,
       },
     ],
 
