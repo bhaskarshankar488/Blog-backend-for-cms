@@ -11,6 +11,8 @@ import dotenv from "dotenv";
 
 const app = express();
 
+app.set("trust proxy", 1); 
+
 app.use(sessionMiddleware);
 // Middlewares
 app.use(express.json());
