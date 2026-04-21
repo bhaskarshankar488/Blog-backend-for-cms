@@ -18,7 +18,7 @@ export const sessionMiddleware = session({
   cookie: {
     secure: true, // true if HTTPS
     httpOnly: true,
-    sameSite: "lax",
+    sameSite: "none",
     maxAge: 1000 * 60 * 60, // 1 hour
   },
 });
