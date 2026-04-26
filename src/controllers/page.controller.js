@@ -83,3 +83,18 @@ export const getPageById = async (req, res) => {
     return errorResponse(res, error.message, error.status || 500);
   }
 };
+
+export const getPageByCategoryAndSlug = async (req, res) => {
+  try {
+    const { categorySlug, pageSlug } = req.params;
+
+    const result = await pageService.getPageByCategoryAndSlug(
+      categorySlug,
+      pageSlug
+    );
+
+    return successResponse(res, result.message, result.data);
+  } catch (error) {
+    return errorResponse(res, error.message, error.status || 500);
+  }
+};

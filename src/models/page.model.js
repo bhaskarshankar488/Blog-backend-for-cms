@@ -9,7 +9,12 @@ const pageSchema = new mongoose.Schema(
       unique: true,
       index: true,
     },
-
+    categoryId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      required: true
+    },
+    
     meta: {
       title: String,
       description: String,

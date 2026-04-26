@@ -8,6 +8,7 @@ export const createPageSchema = Joi.object({
   title: Joi.string().required(),
 
   slug: Joi.string().required(),
+  categoryId: objectId.required(),
 
   meta: Joi.object({
     title: Joi.string().required(),

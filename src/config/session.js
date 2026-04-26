@@ -4,21 +4,22 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+const isProd = process.env.NODE_ENV === "production";
+
 export const sessionMiddleware = session({
   secret: process.env.SESSION_SECRET || "mysecretkey",
   resave: false,
   saveUninitialized: false,
 
-  // ✅ MongoDB session store
   store: MongoStore.create({
     mongoUrl: process.env.MONGO_URI,
     collectionName: "sessions",
   }),
 
   cookie: {
-    secure: true, // true if HTTPS
+    secure: isProd, // ✅ only true in production
     httpOnly: true,
-    sameSite: "none",
-    maxAge: 1000 * 60 * 60, // 1 hour
+    sameSite: isProd ? "none" : "lax", // ✅ dynamic
+    maxAge: 1000 * 60 * 60,
   },
 });

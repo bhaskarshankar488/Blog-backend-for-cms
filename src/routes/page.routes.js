@@ -8,7 +8,8 @@ import {
   getPageBySlug,
   previewPage,
   getPages,
-  getPageById
+  getPageById,
+  getPageByCategoryAndSlug
 } from "../controllers/page.controller.js";
 
 import { validate } from "../middlewares/validate.middleware.js";
@@ -77,7 +78,10 @@ router.get(
 
 router.get("/preview/:slug", previewPage);
 
-router.get("/:slug", getPageBySlug);
+router.get(
+  "/:categorySlug/:pageSlug",
+  getPageByCategoryAndSlug
+);
 
 
 export default router;

@@ -32,7 +32,7 @@ export const generateSchema = (page) => {
       description: tool.customDescription,
       url:tool.link,
 
-      applicationCategory: "AI Tool", // ✅ IMPORTANT
+      applicationCategory: page.category.name, // ✅ IMPORTANT
 
       brand: {
         "@type": "Brand",

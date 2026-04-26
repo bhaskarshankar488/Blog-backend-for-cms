@@ -2,15 +2,20 @@ import { Page } from "../../models/page.model.js";
 import { mergeTools } from "../common/merge.service.js";
 import { generateSchema } from "../common/schema.service.js";
 import { serviceSuccess, serviceError } from "../../utils/serviceResponse.js";
+import { Category } from "../../models/category.model.js";
+import { buildPageResponse }  from "./page.response.js";
 
 // CREATE PAGE
 export const createPage = async (data) => {
+  const category = await Category.findById(data.categoryId);
   const existing = await Page.findOne({ slug: data.slug });
 
   if (existing) {
     throw serviceError("Page already exists", 409);
   }
-
+  if (!category) {
+    throw serviceError("Invalid category", 400);
+  }
   const page = await Page.create(data);
 
   return serviceSuccess(page, "Page created successfully");
@@ -41,10 +46,41 @@ export const getPageBySlug = async (slug) => {
   return serviceSuccess(response, "Page fetched successfully");
 };
 
+
+export const getPageByCategoryAndSlug = async (categorySlug, pageSlug) => {
+  const category = await Category.findOne({ slug: categorySlug });
+
+  if (!category) {
+    throw serviceError("Category not found", 404);
+  }
+
+  const page = await Page.findOne({
+    slug: pageSlug,
+    categoryId: category._id,
+    status: "published",
+  });
+
+  if (!page) {
+    throw serviceError("Page not found", 404);
+  }
+
+  const mergedTools = await mergeTools(page);
+
+  const response = buildPageResponse(page, category, mergedTools);
+
+  return serviceSuccess(response, "Page fetched successfully");
+};
+
 // UPDATE PAGE
 export const updatePage = async (pageId, data) => {
   const page = await Page.findById(pageId);
+   if (data.categoryId) {
+    const category = await Category.findById(data.categoryId);
 
+    if (!category) {
+      throw serviceError("Invalid category", 400);
+    }
+  }
   if (!page) {
     throw serviceError("Page not found", 404);
   }
@@ -84,7 +120,7 @@ export const updatePageStatus = async (pageId, status) => {
   page.status = status;
   await page.save();
 
-  return serviceSuccess(page, "Page status updated successfully");
+  return serviceSuccess(page.status, "Page status updated successfully");
 };
 
 // PREVIEW PAGE (NO STATUS FILTER)
