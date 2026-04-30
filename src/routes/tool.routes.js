@@ -14,6 +14,8 @@ import {
   toolIdSchema
 } from "../validators/tool.validator.js";
 
+import { upload } from "../middlewares/upload.middleware.js";
+
 const router = express.Router();
 
 // CREATE TOOL
@@ -21,6 +23,7 @@ router.post(
   "/",
   isAuthenticated,
   checkPermission("tools", "create"),
+  upload.single("image"),
   validate(createToolSchema),
   createTool
 );
@@ -39,7 +42,8 @@ router.put(
   isAuthenticated,
   checkPermission("tools", "update"),
   validate(toolIdSchema, "params"),   
-  validate(updateToolSchema),   
+  validate(updateToolSchema),
+  upload.single("image"),   
   updateTool
 );
 

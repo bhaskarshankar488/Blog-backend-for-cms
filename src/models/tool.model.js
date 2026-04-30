@@ -15,10 +15,17 @@ const toolSchema = new mongoose.Schema(
       index: true,
     },
 
-    image: {
-      type: String,
-      default: "",
-    },
+  image: {
+  url: {
+    type: String,
+    default: "",
+  },
+
+  public_id: {
+    type: String,
+    default: "",
+  },
+},
 
     brand: {
       type: String,
