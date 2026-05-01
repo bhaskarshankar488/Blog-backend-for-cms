@@ -2,18 +2,27 @@ import Joi from "joi";
 
 export const createToolSchema = Joi.object({
   name: Joi.string().required(),
+
   slug: Joi.string()
     .regex(/^[a-z0-9-]+$/)
     .required(),
 
-  image: Joi.string().allow("", null),
+  image: Joi.object({
+    url: Joi.string().allow("", null),
+
+    public_id: Joi.string().allow("", null),
+  }).optional(),
+
   brand: Joi.string().allow("", null),
+
   tags: Joi.array()
-  .items(Joi.string())
-  .max(3)
-  .optional(),
+    .items(Joi.string())
+    .max(3)
+    .optional(),
+
   globalDescription: Joi.string().allow("", null),
-   link: Joi.string()
+
+  link: Joi.string()
     .uri()
     .required()
     .messages({
@@ -32,15 +41,27 @@ export const toolIdSchema = Joi.object({
 // UPDATE TOOL
 export const updateToolSchema = Joi.object({
   name: Joi.string().optional(),
-  slug: Joi.string().regex(/^[a-z0-9-]+$/).optional(),
-  image: Joi.string().allow("", null),
+
+  slug: Joi.string()
+    .regex(/^[a-z0-9-]+$/)
+    .optional(),
+
+  image: Joi.object({
+    url: Joi.string().allow("", null),
+
+    public_id: Joi.string().allow("", null),
+  }).optional(),
+
   brand: Joi.string().allow("", null),
+
   globalDescription: Joi.string().allow("", null),
+
   tags: Joi.array()
-  .items(Joi.string())
-  .max(3)
-  .optional(),
-   link: Joi.string()
+    .items(Joi.string())
+    .max(3)
+    .optional(),
+
+  link: Joi.string()
     .uri()
     .required()
     .messages({

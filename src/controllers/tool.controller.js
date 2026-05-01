@@ -1,5 +1,6 @@
 import * as toolService from "../services/tool/tool.service.js";
 import { successResponse, errorResponse } from "../utils/responseHandler.js";
+import { Tool } from "../models/tool.model.js";
 import { uploadToCloudinary, 
   deleteFromCloudinary,
  } from "../utils/cloudinary.js";
@@ -28,7 +29,7 @@ export const createTool = async (req, res) => {
     const result = await toolService.createTool(req.body);
 
     return successResponse(res, result.message, result.data, 201);
-  } catch (error) {
+  } catch (error) { 
     return errorResponse(res, error.message, error.status || 500);
   }
 };

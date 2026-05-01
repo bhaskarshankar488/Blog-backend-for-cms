@@ -41,9 +41,9 @@ router.put(
   "/:id",
   isAuthenticated,
   checkPermission("tools", "update"),
+  upload.single("image"), 
   validate(toolIdSchema, "params"),   
-  validate(updateToolSchema),
-  upload.single("image"),   
+  validate(updateToolSchema),  
   updateTool
 );
 

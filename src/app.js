@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
@@ -8,7 +11,7 @@ import pageRoutes from "./routes/page.routes.js";
 import revalidateRoutes from "./routes/revalidate.routes.js";  
 import { sessionMiddleware} from "./config/session.js";
 import categoryRoutes from "./routes/category.routes.js";
-import dotenv from "dotenv";
+
 
 const allowedOrigins = [
   "http://localhost:3000",
