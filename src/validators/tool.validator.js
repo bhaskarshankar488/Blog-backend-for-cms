@@ -7,11 +7,7 @@ export const createToolSchema = Joi.object({
     .regex(/^[a-z0-9-]+$/)
     .required(),
 
-  image: Joi.object({
-    url: Joi.string().allow("", null),
-
-    public_id: Joi.string().allow("", null),
-  }).optional(),
+  image: Joi.any().optional(),
 
   brand: Joi.string().allow("", null),
 
@@ -46,11 +42,7 @@ export const updateToolSchema = Joi.object({
     .regex(/^[a-z0-9-]+$/)
     .optional(),
 
-  image: Joi.object({
-    url: Joi.string().allow("", null),
-
-    public_id: Joi.string().allow("", null),
-  }).optional(),
+  image: Joi.any().optional(),
 
   brand: Joi.string().allow("", null),
 
