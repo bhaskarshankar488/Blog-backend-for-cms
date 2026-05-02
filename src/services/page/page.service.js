@@ -147,9 +147,10 @@ export const previewPageBySlug = async (slug) => {
 
 // GET ALL PAGES (ADMIN)
 export const getPages = async () => {
-  const pages = await Page.find()
-    .select("title slug status createdAt updatedAt") 
-    .sort({ createdAt: -1 });
+ const pages = await Page.find()
+  .select("title slug status createdAt updatedAt categoryId")
+  .populate("categoryId", "name slug")
+  .sort({ createdAt: -1 });
 
   return serviceSuccess(pages, "Pages fetched successfully");
 };

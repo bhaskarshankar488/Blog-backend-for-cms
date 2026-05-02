@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 const pageSchema = new mongoose.Schema(
   {
     title: String,
+    pagedescription: String,
 
     slug: {
       type: String,

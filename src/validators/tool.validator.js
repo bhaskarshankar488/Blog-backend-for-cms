@@ -18,6 +18,22 @@ export const createToolSchema = Joi.object({
 
   globalDescription: Joi.string().allow("", null),
 
+  // ✅ Rating Value
+  ratingValue: Joi.number()
+    .min(0)
+    .max(5)
+    .optional(),
+
+  // ✅ Rating Count
+  ratingCount: Joi.number()
+    .min(0)
+    .optional(),
+
+  // ✅ Review Count
+  reviewCount: Joi.number()
+    .min(0)
+    .optional(),
+
   link: Joi.string()
     .uri()
     .required()
@@ -26,6 +42,7 @@ export const createToolSchema = Joi.object({
       "string.uri": "Link must be a valid URL",
     }),
 });
+
 // Mongo ObjectId validation
 const objectId = Joi.string().regex(/^[0-9a-fA-F]{24}$/);
 
@@ -51,6 +68,22 @@ export const updateToolSchema = Joi.object({
   tags: Joi.array()
     .items(Joi.string())
     .max(3)
+    .optional(),
+
+  // ✅ Rating Value
+  ratingValue: Joi.number()
+    .min(0)
+    .max(5)
+    .optional(),
+
+  // ✅ Rating Count
+  ratingCount: Joi.number()
+    .min(0)
+    .optional(),
+
+  // ✅ Review Count
+  reviewCount: Joi.number()
+    .min(0)
     .optional(),
 
   link: Joi.string()

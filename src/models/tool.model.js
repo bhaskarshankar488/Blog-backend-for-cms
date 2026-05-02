@@ -15,17 +15,17 @@ const toolSchema = new mongoose.Schema(
       index: true,
     },
 
-  image: {
-  url: {
-    type: String,
-    default: "",
-  },
+    image: {
+      url: {
+        type: String,
+        default: "",
+      },
 
-  public_id: {
-    type: String,
-    default: "",
-  },
-},
+      public_id: {
+        type: String,
+        default: "",
+      },
+    },
 
     brand: {
       type: String,
@@ -54,6 +54,28 @@ const toolSchema = new mongoose.Schema(
         message: "Maximum 3 keywords allowed",
       },
       default: [],
+    },
+
+    // ✅ Rating Value (Max 5)
+    ratingValue: {
+      type: Number,
+      min: 0,
+      max: 5,
+      default: 0,
+    },
+
+    // ✅ Total Rating Count
+    ratingCount: {
+      type: Number,
+      min: 0,
+      default: 0,
+    },
+
+    // ✅ Total Review Count
+    reviewCount: {
+      type: Number,
+      min: 0,
+      default: 0,
     },
   },
   {
