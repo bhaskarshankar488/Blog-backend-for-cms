@@ -18,9 +18,9 @@ export const mergeTools = async (page) => {
       brand: tool.brand,
       tags: tool.tags,
       customDescription: t.customDescription || tool.globalDescription,
-      reviews: t.reviewCount || 100, 
+      reviews: tool.reviewCount || 100, 
       position: t.position || index + 1,
-      rating: t.ratingValue,
+      rating: tool.ratingValue,
       link: tool?.link || "#"
     };
   });

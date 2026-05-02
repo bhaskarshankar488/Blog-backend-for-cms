@@ -41,10 +41,10 @@ export const generateSchema = (page) => {
 
       aggregateRating: {
         "@type": "AggregateRating",
-        ratingValue: tool.rating?.toString() || "4",
+        ratingValue: tool.ratingValue?.toString() || "4",
         bestRating: "5",
         worstRating: "1",
-        ratingCount: "100",
+        ratingCount: tool.ratingCount?.toString() || "100",
       },
     };
   });

@@ -6,7 +6,7 @@ const objectId = Joi.string().hex().length(24);
 // CREATE PAGE
 export const createPageSchema = Joi.object({
   title: Joi.string().required(),
-  pagedescrption: Joi.string().required(),
+  pageDescription: Joi.string().required(),
 
   slug: Joi.string().required(),
   categoryId: objectId.required(),

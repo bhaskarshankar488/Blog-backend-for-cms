@@ -44,19 +44,7 @@ const toolSchema = new mongoose.Schema(
       default: "",
     },
 
-    // ✅ Max 3 tags only
-    tags: {
-      type: [String],
-      validate: {
-        validator: function (val) {
-          return val.length <= 3;
-        },
-        message: "Maximum 3 keywords allowed",
-      },
-      default: [],
-    },
-
-    // ✅ Rating Value (Max 5)
+    // ✅ NEW FIELDS
     ratingValue: {
       type: Number,
       min: 0,
@@ -64,24 +52,41 @@ const toolSchema = new mongoose.Schema(
       default: 0,
     },
 
-    // ✅ Total Rating Count
     ratingCount: {
       type: Number,
       min: 0,
       default: 0,
     },
 
-    // ✅ Total Review Count
     reviewCount: {
       type: Number,
       min: 0,
       default: 0,
     },
+
+    // ✅ Max 3 tags only
+    tags: {
+      type: [String],
+
+      validate: {
+        validator: function (val) {
+          return val.length <= 3;
+        },
+
+        message: "Maximum 3 keywords allowed",
+      },
+
+      default: [],
+    },
   },
+
   {
     timestamps: true,
     versionKey: false,
   }
 );
 
-export const Tool = mongoose.model("Tool", toolSchema);
+export const Tool = mongoose.model(
+  "Tool",
+  toolSchema
+);

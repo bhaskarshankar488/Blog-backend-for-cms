@@ -3,13 +3,12 @@ import mongoose from "mongoose";
 const pageSchema = new mongoose.Schema(
   {
     title: String,
-    pagedescription: String,
-
     slug: {
       type: String,
       unique: true,
       index: true,
     },
+    pageDescription: String,
     categoryId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",

@@ -156,7 +156,9 @@ export const getPages = async () => {
 };
 
 export const getPageById = async (id) => {
-  const page = await Page.findById(id);
+  const page = await Page.findById(id)
+  .populate("categoryId")
+  .populate("tools.toolId");
 
   if (!page) {
     throw serviceError("Page not found", 404);
