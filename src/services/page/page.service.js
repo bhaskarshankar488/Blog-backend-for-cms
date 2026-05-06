@@ -136,10 +136,7 @@ export const previewPageBySlug = async (slug) => {
   const response = {
     ...page.toObject(),
     tools: mergedTools,
-    schema: generateSchema({
-      ...page.toObject(),
-      tools: mergedTools,
-    }),
+  
   };
 
   return serviceSuccess(response, "Preview page fetched successfully");
