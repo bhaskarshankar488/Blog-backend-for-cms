@@ -17,15 +17,32 @@ export const createTool = async (data) => {
 
 // GET TOOLS (SEARCH)
 export const getTools = async (search) => {
-  const query = search
-    ? { name: { $regex: search, $options: "i" } }
-    : {};
+  let query = {};
 
-   const tools = await Tool.find(query)
-    .select("name slug image brand") // ✅ only needed fields
-    .limit(20); // ✅ limit for performance
+  // ✅ Search support
+  if (search && search.trim() !== "") {
+    query = {
+      $or: [
+        { name: { $regex: search, $options: "i" } },
+        { slug: { $regex: search, $options: "i" } },
+        { brand: { $regex: search, $options: "i" } },
+      ],
+    };
+  }
 
-  return serviceSuccess(tools, "Tools fetched successfully");
+  const tools = await Tool.find(query)
+    .select("name slug image brand updatedAt createdAt")
+    
+    // ✅ Latest updated first
+    .sort({ updatedAt: -1, createdAt: -1 })
+
+    // ✅ Limit 20 tools
+    .limit(20);
+
+  return serviceSuccess(
+    tools,
+    "Tools fetched successfully"
+  );
 };
 
 export const updateTool = async (id, data) => {

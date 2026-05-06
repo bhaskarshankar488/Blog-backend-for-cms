@@ -66,11 +66,27 @@ export const previewPage = async (req, res) => {
 
 export const getPages = async (req, res) => {
   try {
-    const result = await pageService.getPages();
 
-    return successResponse(res, result.message, result.data);
+    // GET SEARCH QUERY
+    const { search } = req.query;
+
+    // PASS SEARCH TO SERVICE
+    const result = await pageService.getPages(search);
+
+    return successResponse(
+      res,
+      result.message,
+      result.data
+    );
+
   } catch (error) {
-    return errorResponse(res, error.message, error.status || 500);
+
+    return errorResponse(
+      res,
+      error.message,
+      error.status || 500
+    );
+
   }
 };
 

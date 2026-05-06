@@ -146,13 +146,56 @@ export const previewPageBySlug = async (slug) => {
 };
 
 // GET ALL PAGES (ADMIN)
-export const getPages = async () => {
- const pages = await Page.find()
-  .select("title slug status createdAt updatedAt categoryId")
-  .populate("categoryId", "name slug")
-  .sort({ createdAt: -1 });
+export const getPages = async (search) => {
 
-  return serviceSuccess(pages, "Pages fetched successfully");
+  let query = {};
+
+  // SEARCH
+  if (search && search.trim() !== "") {
+
+    query = {
+      $or: [
+        {
+          title: {
+            $regex: search,
+            $options: "i",
+          },
+        },
+
+        {
+          slug: {
+            $regex: search,
+            $options: "i",
+          },
+        },
+      ],
+    };
+  }
+
+  const pages = await Page.find(query)
+
+    .select(
+      "title slug status createdAt updatedAt categoryId"
+    )
+
+    .populate(
+      "categoryId",
+      "name slug"
+    )
+
+    // LATEST UPDATED FIRST
+    .sort({
+      updatedAt: -1,
+      createdAt: -1,
+    })
+
+    // LIMIT
+    .limit(20);
+
+  return serviceSuccess(
+    pages,
+    "Pages fetched successfully"
+  );
 };
 
 export const getPageById = async (id) => {
