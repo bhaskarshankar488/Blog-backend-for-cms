@@ -21,11 +21,7 @@ const allowedOrigins = [
 
 const app = express();
 
-app.set("trust proxy", 1); 
-
-app.use(sessionMiddleware);
-// Middlewares
-app.use(express.json());
+app.set("trust proxy", 1);
 
 app.use(cors({
   origin: function (origin, callback) {
@@ -35,9 +31,15 @@ app.use(cors({
       callback(new Error("Not allowed by CORS"));
     }
   },
-  credentials: true
+  credentials: true,
 }));
+
+app.use(express.json());
+
+app.use(sessionMiddleware);
+
 app.use(morgan("dev"));
+
 
 // Test route
 app.get("/", (req, res) => {

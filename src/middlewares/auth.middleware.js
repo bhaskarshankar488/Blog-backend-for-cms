@@ -7,10 +7,13 @@ export const isAuthenticated = (req, res, next) => {
       return errorResponse(res, "Unauthorized", 401);
     }
 
-    // 2. Attach user to request (best practice)
+    // 2. Refresh session expiry
+    req.session.touch();
+
+    // 3. Attach user to request
     req.user = req.session.user;
 
-    // 3. Continue
+    // 4. Continue
     next();
 
   } catch (error) {
