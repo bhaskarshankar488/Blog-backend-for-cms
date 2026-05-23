@@ -7,7 +7,8 @@ export const buildPageResponse = (page, category, mergedTools) => {
     _id: page._id,
     title: page.title,
     slug: page.slug,
-
+    pageDescription:page.pageDescription,
+    
     category: {
       name: category?.name || "",
       slug: category?.slug || "",
