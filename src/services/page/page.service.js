@@ -3,10 +3,10 @@ import { mergeTools } from "../common/merge.service.js";
 import { generateSchema } from "../common/schema.service.js";
 import { serviceSuccess, serviceError } from "../../utils/serviceResponse.js";
 import { Category } from "../../models/category.model.js";
-import { buildPageResponse }  from "./page.response.js";
+import { buildPageResponse } from "./page.response.js";
 
 // CREATE PAGE
-export const createPage = async (data) => {
+export const createPage = async (data, userId) => {
   const category = await Category.findById(data.categoryId);
   const existing = await Page.findOne({ slug: data.slug });
 
@@ -16,7 +16,12 @@ export const createPage = async (data) => {
   if (!category) {
     throw serviceError("Invalid category", 400);
   }
-  const page = await Page.create(data);
+  const page = await Page.create({
+    ...data,
+    createdBy: userId,
+    updatedBy: userId,
+  });
+
 
   return serviceSuccess(page, "Page created successfully");
 };
@@ -72,24 +77,42 @@ export const getPageByCategoryAndSlug = async (categorySlug, pageSlug) => {
 };
 
 // UPDATE PAGE
-export const updatePage = async (pageId, data) => {
+export const updatePage = async (
+  pageId,
+  data,
+  userId
+) => {
   const page = await Page.findById(pageId);
-   if (data.categoryId) {
-    const category = await Category.findById(data.categoryId);
+
+  if (!page) {
+    throw serviceError("Page not found", 404);
+  }
+
+  if (data.categoryId) {
+    const category = await Category.findById(
+      data.categoryId
+    );
 
     if (!category) {
       throw serviceError("Invalid category", 400);
     }
   }
-  if (!page) {
-    throw serviceError("Page not found", 404);
-  }
 
-  const updated = await Page.findByIdAndUpdate(pageId, data, {
-    new: true,
-  });
+  const updated = await Page.findByIdAndUpdate(
+    pageId,
+    {
+      ...data,
+      updatedBy: userId,
+    },
+    {
+      new: true,
+    }
+  );
 
-  return serviceSuccess(updated, "Page updated successfully");
+  return serviceSuccess(
+    updated,
+    "Page updated successfully"
+  );
 };
 
 // DELETE PAGE
@@ -106,7 +129,11 @@ export const deletePage = async (pageId) => {
 };
 
 // UPDATE STATUS
-export const updatePageStatus = async (pageId, status) => {
+export const updatePageStatus = async (
+  pageId,
+  status,
+  userId
+) => {
   const page = await Page.findById(pageId);
 
   if (!page) {
@@ -118,9 +145,14 @@ export const updatePageStatus = async (pageId, status) => {
   }
 
   page.status = status;
+  page.updatedBy = userId;
+
   await page.save();
 
-  return serviceSuccess(page.status, "Page status updated successfully");
+  return serviceSuccess(
+    page,
+    "Page status updated successfully"
+  );
 };
 
 // PREVIEW PAGE (NO STATUS FILTER)
@@ -136,7 +168,7 @@ export const previewPageBySlug = async (slug) => {
   const response = {
     ...page.toObject(),
     tools: mergedTools,
-  
+
   };
 
   return serviceSuccess(response, "Preview page fetched successfully");
@@ -180,6 +212,16 @@ export const getPages = async (search) => {
       "name slug"
     )
 
+    .populate(
+    "createdBy",
+    "name"
+  )
+
+  .populate(
+    "updatedBy",
+    "name"
+  )
+
     // LATEST UPDATED FIRST
     .sort({
       updatedAt: -1,
@@ -197,8 +239,8 @@ export const getPages = async (search) => {
 
 export const getPageById = async (id) => {
   const page = await Page.findById(id)
-  .populate("categoryId")
-  .populate("tools.toolId");
+    .populate("categoryId")
+    .populate("tools.toolId");
 
   if (!page) {
     throw serviceError("Page not found", 404);

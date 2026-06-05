@@ -20,6 +20,7 @@ export const loginUser = async ({ email, password }) => {
     // ✅ Mongo uses _id
     id: user._id,
     email: user.email,
+    name: user.name,
     role: user.role,
   };
 };

@@ -14,7 +14,20 @@ const pageSchema = new mongoose.Schema(
       ref: "Category",
       required: true
     },
-    
+
+    // Audit Fields
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+
+    updatedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true
+    },
+
     meta: {
       title: String,
       description: String,
@@ -30,10 +43,10 @@ const pageSchema = new mongoose.Schema(
         customDescription: String,
         rating: Number,
         reviews: {
-            type: Number,
-            default: 0
-          },
-         position: Number,
+          type: Number,
+          default: 0
+        },
+        position: Number,
       },
     ],
 
