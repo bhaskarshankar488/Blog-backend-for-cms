@@ -5,7 +5,6 @@ import { successResponse, errorResponse } from "../utils/responseHandler.js";
 export const createPage = async (req, res) => {
   try {
     const result = await pageService.createPage(req.body,req.user.id);
-    console.log("req.user =", req.user);
     return successResponse(res, result.message, result.data, 201);
   } catch (error) {
     return errorResponse(res, error.message, error.status || 500);
@@ -58,7 +57,7 @@ export const getPageBySlug = async (req, res) => {
 
 export const previewPage = async (req, res) => {
   try {
-    const result = await pageService.previewPageBySlug(req.params.slug,req.user.id);
+    const result = await pageService.previewPageBySlug(req.params.slug);
 
     return successResponse(res, result.message, result.data);
   } catch (error) {
