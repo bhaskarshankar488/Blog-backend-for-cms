@@ -11,6 +11,8 @@ import pageRoutes from "./routes/page.routes.js";
 import revalidateRoutes from "./routes/revalidate.routes.js";  
 import { sessionMiddleware} from "./config/session.js";
 import categoryRoutes from "./routes/category.routes.js";
+import publicRoutes
+from "./public/routes/public.routes.js";
 
 
 const allowedOrigins = [
@@ -53,5 +55,14 @@ app.use("/api/tools", toolRoutes);
 app.use("/api/pages", pageRoutes);
 app.use("/api/categories", categoryRoutes); 
 app.use("/api/revalidate", revalidateRoutes); 
+
+
+
+//public rooute
+
+app.use(
+  "/api/public",
+  publicRoutes
+);
 
 export default app;

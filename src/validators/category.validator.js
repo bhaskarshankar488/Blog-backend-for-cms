@@ -2,19 +2,24 @@ import Joi from "joi";
 
 const objectId = Joi.string().hex().length(24);
 
-// CREATE
 export const createCategorySchema = Joi.object({
-  name: Joi.string().required(),
-  slug: Joi.string().required(),
+  name: Joi.string().trim().required(),
+  slug: Joi.string().trim().required(),
+  title: Joi.string().allow(""),
+  description: Joi.string().allow(""),
+  seoTitle: Joi.string().allow(""),
+  seoDescription: Joi.string().allow(""),
+  seoKeywords: Joi.array().items(Joi.string())
 });
 
-// UPDATE
-export const updateCategorySchema = Joi.object({
-  name: Joi.string().optional(),
-  slug: Joi.string().optional(),
-});
+export const updateCategorySchema =
+  createCategorySchema
+    .fork(["name", "slug"], schema =>
+      schema.optional()
+    )
+    .min(1);
 
 // PARAM ID
 export const categoryIdSchema = Joi.object({
-  id: objectId.required(),
+  id: Joi.string().hex().length(24).required(),
 });

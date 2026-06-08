@@ -11,6 +11,14 @@ export const createPageSchema = Joi.object({
   slug: Joi.string().required(),
   categoryId: objectId.required(),
 
+   // New Fields
+  categoryDescription: Joi.string().allow("").optional(),
+
+  catImage: Joi.object({
+    url: Joi.string().allow("").optional(),
+    public_id: Joi.string().allow("").optional(),
+  }).optional(),
+
   meta: Joi.object({
     title: Joi.string().required(),
     description: Joi.string().required(),

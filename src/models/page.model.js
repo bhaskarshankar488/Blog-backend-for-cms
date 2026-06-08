@@ -3,16 +3,36 @@ import mongoose from "mongoose";
 const pageSchema = new mongoose.Schema(
   {
     title: String,
+
     slug: {
       type: String,
       unique: true,
       index: true,
     },
+
     pageDescription: String,
+
+    // New Fields
+    categoryDescription: {
+      type: String,
+      default: "",
+    },
+
+    catImage: {
+      url: {
+        type: String,
+        default: "",
+      },
+      public_id: {
+        type: String,
+        default: "",
+      },
+    },
+
     categoryId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
-      required: true
+      required: true,
     },
 
     // Audit Fields
@@ -25,7 +45,7 @@ const pageSchema = new mongoose.Schema(
     updatedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true
+      required: true,
     },
 
     meta: {
@@ -44,7 +64,7 @@ const pageSchema = new mongoose.Schema(
         rating: Number,
         reviews: {
           type: Number,
-          default: 0
+          default: 0,
         },
         position: Number,
       },
@@ -57,7 +77,6 @@ const pageSchema = new mongoose.Schema(
       },
     ],
 
-    // 🔥 NEW CONTENT FIELD
     content: {
       type: String,
       default: "",

@@ -57,7 +57,7 @@ export const deleteCategory = async (id) => {
   return serviceSuccess({}, "Category deleted successfully");
 };
 export const getCategoryById = async (id) => {
-  const category = await Category.findById(id).select("_id name slug");
+  const category = await Category.findById(id)
 
   if (!category) {
     throw serviceError("Category not found", 404);

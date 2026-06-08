@@ -1,23 +1,108 @@
 import * as pageService from "../services/page/page.service.js";
+import { Page } from "../models/page.model.js";
 import { successResponse, errorResponse } from "../utils/responseHandler.js";
+import { uploadToCloudinary, 
+  deleteFromCloudinary,
+ } from "../utils/cloudinary.js";
 
-// CREATE
 export const createPage = async (req, res) => {
   try {
-    const result = await pageService.createPage(req.body,req.user.id);
-    return successResponse(res, result.message, result.data, 201);
+    let catImageData = {
+      url: "",
+      public_id: "",
+    };
+
+    if (req.file) {
+      const uploadResult = await uploadToCloudinary(
+        req.file.buffer
+      );
+
+      catImageData = {
+        url: uploadResult.secure_url,
+        public_id: uploadResult.public_id,
+      };
+    }
+
+    req.body.catImage = catImageData;
+
+    const result = await pageService.createPage(
+      req.body,
+      req.user.id
+    );
+
+    return successResponse(
+      res,
+      result.message,
+      result.data,
+      201
+    );
   } catch (error) {
-    return errorResponse(res, error.message, error.status || 500);
+    return errorResponse(
+      res,
+      error.message,
+      error.status || 500
+    );
   }
 };
 
 // UPDATE
 export const updatePage = async (req, res) => {
   try {
-    const result = await pageService.updatePage(req.params.id, req.body,req.user.id);
-    return successResponse(res, result.message, result.data);
+    const page = await Page.findById(req.params.id);
+
+    if (!page) {
+      return errorResponse(
+        res,
+        "Page not found",
+        404
+      );
+    }
+
+    let catImageData = page.catImage;
+
+    // new image uploaded
+    if (req.file) {
+
+      // delete old image
+      if (page.catImage?.public_id) {
+        await deleteFromCloudinary(
+          page.catImage.public_id
+        );
+      }
+
+      // upload new image
+      const uploaded =
+        await uploadToCloudinary(
+          req.file.buffer
+        );
+
+      catImageData = {
+        url: uploaded.secure_url,
+        public_id: uploaded.public_id,
+      };
+    }
+
+    req.body.catImage = catImageData;
+
+    const result =
+      await pageService.updatePage(
+        req.params.id,
+        req.body,
+        req.user.id
+      );
+
+    return successResponse(
+      res,
+      result.message,
+      result.data
+    );
+
   } catch (error) {
-    return errorResponse(res, error.message, error.status || 500);
+    return errorResponse(
+      res,
+      error.message,
+      error.status || 500
+    );
   }
 };
 

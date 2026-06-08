@@ -1,4 +1,5 @@
 import express from "express";
+import { upload } from "../middlewares/upload.middleware.js";
 
 import {
   createPage,
@@ -15,6 +16,7 @@ import {
 import { validate } from "../middlewares/validate.middleware.js";
 import { isAuthenticated } from "../middlewares/auth.middleware.js";
 import { checkPermission } from "../middlewares/permission.middleware.js";
+import { parseMultipartJson } from "../middlewares/parseMultipartJson.js";
 
 import {
   createPageSchema,
@@ -30,6 +32,8 @@ router.post(
   "/",
   isAuthenticated,
   checkPermission("pages", "create"),
+  upload.single("catImage"),
+  parseMultipartJson,
   validate(createPageSchema),
   createPage
 );
@@ -39,6 +43,8 @@ router.put(
   "/:id",
   isAuthenticated,
   checkPermission("pages", "update"),
+  upload.single("catImage"),
+  parseMultipartJson,
   validate(updatePageSchema),
   updatePage
 );
