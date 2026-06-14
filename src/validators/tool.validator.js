@@ -1,5 +1,14 @@
 import Joi from "joi";
 
+
+// Mongo ObjectId validation
+const objectId = Joi.string().regex(/^[0-9a-fA-F]{24}$/);
+
+// PARAM VALIDATION
+export const toolIdSchema = Joi.object({
+  id: objectId.required(),
+});
+
 export const createToolSchema = Joi.object({
   name: Joi.string().required(),
 
@@ -17,6 +26,8 @@ export const createToolSchema = Joi.object({
     .optional(),
 
   globalDescription: Joi.string().allow("", null),
+
+  categoryId: objectId.required(),
 
   // ✅ Rating Value
   ratingValue: Joi.number()
@@ -43,13 +54,6 @@ export const createToolSchema = Joi.object({
     }),
 });
 
-// Mongo ObjectId validation
-const objectId = Joi.string().regex(/^[0-9a-fA-F]{24}$/);
-
-// PARAM VALIDATION
-export const toolIdSchema = Joi.object({
-  id: objectId.required(),
-});
 
 // UPDATE TOOL
 export const updateToolSchema = Joi.object({
@@ -64,6 +68,8 @@ export const updateToolSchema = Joi.object({
   brand: Joi.string().allow("", null),
 
   globalDescription: Joi.string().allow("", null),
+
+  categoryId: objectId.required(),
 
   tags: Joi.array()
     .items(Joi.string())

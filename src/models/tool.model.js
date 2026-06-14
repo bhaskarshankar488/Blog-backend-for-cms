@@ -64,6 +64,12 @@ const toolSchema = new mongoose.Schema(
       default: 0,
     },
 
+    categoryId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      required: true,
+    },
+
     // ✅ Max 3 tags only
     tags: {
       type: [String],
