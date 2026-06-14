@@ -44,6 +44,19 @@ const toolSchema = new mongoose.Schema(
       default: "",
     },
 
+    pricingLabel: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    // NEW
+    whatIsIt: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
     // ✅ NEW FIELDS
     ratingValue: {
       type: Number,

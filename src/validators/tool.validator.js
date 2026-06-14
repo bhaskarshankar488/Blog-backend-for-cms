@@ -1,6 +1,4 @@
 import Joi from "joi";
-
-
 // Mongo ObjectId validation
 const objectId = Joi.string().regex(/^[0-9a-fA-F]{24}$/);
 
@@ -18,89 +16,51 @@ export const createToolSchema = Joi.object({
 
   image: Joi.any().optional(),
 
-  brand: Joi.string().allow("", null),
+  brand: Joi.string().allow("", null).required(),
+
+  link: Joi.string()
+    .uri()
+    .required(),
+
+  globalDescription: Joi.string()
+    .allow("", null),
+
+  // NEW FIELDS
+  pricingLabel: Joi.string()
+    .allow("", null)
+    .optional(),
+
+  whatIsIt: Joi.string()
+    .allow("", null)
+    .optional(),
+
+  categoryId: objectId.required(),
 
   tags: Joi.array()
     .items(Joi.string())
     .max(3)
     .optional(),
 
-  globalDescription: Joi.string().allow("", null),
-
-  categoryId: objectId.required(),
-
-  // ✅ Rating Value
   ratingValue: Joi.number()
     .min(0)
     .max(5)
     .optional(),
 
-  // ✅ Rating Count
   ratingCount: Joi.number()
     .min(0)
     .optional(),
 
-  // ✅ Review Count
   reviewCount: Joi.number()
     .min(0)
     .optional(),
-
-  link: Joi.string()
-    .uri()
-    .required()
-    .messages({
-      "string.empty": "Link is required",
-      "string.uri": "Link must be a valid URL",
-    }),
 });
 
 
 // UPDATE TOOL
-export const updateToolSchema = Joi.object({
-  name: Joi.string().optional(),
-
-  slug: Joi.string()
-    .regex(/^[a-z0-9-]+$/)
-    .optional(),
-
-  image: Joi.any().optional(),
-
-  brand: Joi.string().allow("", null),
-
-  globalDescription: Joi.string().allow("", null),
-
-  categoryId: objectId.required(),
-
-  tags: Joi.array()
-    .items(Joi.string())
-    .max(3)
-    .optional(),
-
-  // ✅ Rating Value
-  ratingValue: Joi.number()
-    .min(0)
-    .max(5)
-    .optional(),
-
-  // ✅ Rating Count
-  ratingCount: Joi.number()
-    .min(0)
-    .optional(),
-
-  // ✅ Review Count
-  reviewCount: Joi.number()
-    .min(0)
-    .optional(),
-
-  link: Joi.string()
-    .uri()
-    .required()
-    .messages({
-      "string.empty": "Link is required",
-      "string.uri": "Link must be a valid URL",
-    }),
-});
-
+export const updateToolSchema = createToolSchema.fork(
+  Object.keys(createToolSchema.describe().keys),
+  (field) => field.optional()
+);
 export const getToolsSchema = Joi.object({
   search: Joi.string().allow("", null),
 });
