@@ -1,5 +1,6 @@
 import express from "express";
-import { createTool, getTools, updateTool, deleteTool,
+import {
+  createTool, getTools, updateTool, deleteTool,
   getToolById
 } from "../controllers/tool.controller.js";
 
@@ -23,9 +24,28 @@ router.post(
   "/",
   isAuthenticated,
   checkPermission("tools", "create"),
-  upload.single("image"),
+  upload.fields([
+    { name: "tool_image", maxCount: 1 },
+    { name: "hero_image", maxCount: 1 },
+    { name: "faq_image", maxCount: 1 },
+  ]),
   validate(createToolSchema),
   createTool
+);
+
+//tool Update Route:
+router.put(
+  "/:id",
+  isAuthenticated,
+  checkPermission("tools", "update"),
+  upload.fields([
+    { name: "tool_image", maxCount: 1 },
+    { name: "hero_image", maxCount: 1 },
+    { name: "faq_image", maxCount: 1 },
+  ]),
+  validate(toolIdSchema, "params"),
+  validate(updateToolSchema),
+  updateTool
 );
 
 // GET TOOLS (SEARCH)
@@ -35,16 +55,6 @@ router.get(
   checkPermission("tools", "read"),
   validate(getToolsSchema, "query"),
   getTools
-);
-
-router.put(
-  "/:id",
-  isAuthenticated,
-  checkPermission("tools", "update"),
-  upload.single("image"), 
-  validate(toolIdSchema, "params"),   
-  validate(updateToolSchema),  
-  updateTool
 );
 
 

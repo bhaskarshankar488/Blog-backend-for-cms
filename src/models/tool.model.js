@@ -15,15 +15,38 @@ const toolSchema = new mongoose.Schema(
       index: true,
     },
 
-    image: {
-      url: {
-        type: String,
-        default: "",
+    images: {
+      tool: {
+        url: {
+          type: String,
+          default: "",
+        },
+        public_id: {
+          type: String,
+          default: "",
+        },
       },
 
-      public_id: {
-        type: String,
-        default: "",
+      hero: {
+        url: {
+          type: String,
+          default: "",
+        },
+        public_id: {
+          type: String,
+          default: "",
+        },
+      },
+
+      faq: {
+        url: {
+          type: String,
+          default: "",
+        },
+        public_id: {
+          type: String,
+          default: "",
+        },
       },
     },
 

@@ -14,7 +14,7 @@ export const createToolSchema = Joi.object({
     .regex(/^[a-z0-9-]+$/)
     .required(),
 
-  image: Joi.any().optional(),
+  images: Joi.any().optional(),
 
   brand: Joi.string().allow("", null).required(),
 

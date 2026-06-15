@@ -1,43 +1,36 @@
 import * as toolService from "../services/tool/tool.service.js";
 import { successResponse, errorResponse } from "../utils/responseHandler.js";
+import { uploadImage, replaceImage } from "../utils/uploadImage.js";
 import { Tool } from "../models/tool.model.js";
-import { uploadToCloudinary, 
+import {
+  uploadToCloudinary,
   deleteFromCloudinary,
- } from "../utils/cloudinary.js";
+} from "../utils/cloudinary.js";
 
 export const createTool = async (req, res) => {
   try {
-    let imageData = {
-      url: "",
-      public_id: "",
+    const files = req.files;
+
+    const images = {
+      tool: await uploadImage(
+        files?.tool_image?.[0]
+      ),
+
+      hero: await uploadImage(
+        files?.hero_image?.[0]
+      ),
+
+      faq: await uploadImage(
+        files?.faq_image?.[0]
+      ),
     };
 
-    // image exists
-    if (req.file) {
-      const result = await uploadToCloudinary(req.file.buffer);
-
-      imageData = {
-        url: result.secure_url,
-        public_id: result.public_id,
-      };
-    }
-
-    // inject image into body
-    req.body.image = imageData;
+    req.body.images = images;
 
     // call service
     const result = await toolService.createTool(req.body);
 
     return successResponse(res, result.message, result.data, 201);
-  } catch (error) { 
-    return errorResponse(res, error.message, error.status || 500);
-  }
-};
-
-export const getTools = async (req, res) => {
-  try {
-    const result = await toolService.getTools(req.query.search);
-    return successResponse(res, result.message, result.data);
   } catch (error) {
     return errorResponse(res, error.message, error.status || 500);
   }
@@ -51,34 +44,46 @@ export const updateTool = async (req, res) => {
       return errorResponse(res, "Tool not found", 404);
     }
 
-    let imageData = tool.image;
+    let images = tool.images || {};
 
-    // new image uploaded
-    if (req.file) {
+    const imageFields = [
+      ["tool", "tool_image"],
+      ["hero", "hero_image"],
+      ["faq", "faq_image"],
+    ];
 
-      // delete old image
-      if (tool.image?.public_id) {
-        await deleteFromCloudinary(tool.image.public_id);
-      }
-
-      // upload new image
-      const uploaded = await uploadToCloudinary(req.file.buffer);
-
-      imageData = {
-        url: uploaded.secure_url,
-        public_id: uploaded.public_id,
-      };
+    for (const [key, fieldName] of imageFields) {
+      images[key] = await replaceImage(
+        images[key],
+        req.files?.[fieldName]?.[0]
+      );
     }
 
-    req.body.image = imageData;
+    req.body.images = images;
 
     const result = await toolService.updateTool(
       req.params.id,
       req.body
     );
 
-    return successResponse(res, result.message, result.data);
+    return successResponse(
+      res,
+      result.message,
+      result.data
+    );
+  } catch (error) {
+    return errorResponse(
+      res,
+      error.message,
+      error.status || 500
+    );
+  }
+};
 
+export const getTools = async (req, res) => {
+  try {
+    const result = await toolService.getTools(req.query.search);
+    return successResponse(res, result.message, result.data);
   } catch (error) {
     return errorResponse(res, error.message, error.status || 500);
   }
