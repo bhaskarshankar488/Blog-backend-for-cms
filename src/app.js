@@ -14,6 +14,8 @@ import categoryRoutes from "./routes/category.routes.js";
 import publicRoutes
 from "./public/routes/public.routes.js";
 
+import toolContentRoutes from "./routes/toolContent.routes.js"; 
+
 
 const allowedOrigins = [
   "http://localhost:3000",
@@ -55,6 +57,11 @@ app.use("/api/tools", toolRoutes);
 app.use("/api/pages", pageRoutes);
 app.use("/api/categories", categoryRoutes); 
 app.use("/api/revalidate", revalidateRoutes); 
+
+app.use(
+  "/api/tool-content",
+  toolContentRoutes
+);
 
 
 
