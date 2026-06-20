@@ -16,6 +16,8 @@ import {
 } from "../validators/tool.validator.js";
 
 import { upload } from "../middlewares/upload.middleware.js";
+import { parseMultipartJson } from "../middlewares/parseMultipartJson.js";
+
 
 const router = express.Router();
 
@@ -29,6 +31,7 @@ router.post(
     { name: "hero_image", maxCount: 1 },
     { name: "faq_image", maxCount: 1 },
   ]),
+  parseMultipartJson,
   validate(createToolSchema),
   createTool
 );
@@ -43,6 +46,7 @@ router.put(
     { name: "hero_image", maxCount: 1 },
     { name: "faq_image", maxCount: 1 },
   ]),
+  parseMultipartJson,
   validate(toolIdSchema, "params"),
   validate(updateToolSchema),
   updateTool

@@ -7,12 +7,47 @@ export const toolIdSchema = Joi.object({
   id: objectId.required(),
 });
 
+export const seoSchema = Joi.object({
+  metaTitle: Joi.string()
+    .trim()
+    .max(60)
+    .allow("")
+    .messages({
+      "string.max":
+        "Meta title should not exceed 60 characters",
+    }),
+
+  metaDescription: Joi.string()
+    .trim()
+    .max(160)
+    .allow("")
+    .messages({
+      "string.max":
+        "Meta description should not exceed 160 characters",
+    }),
+
+  metaKeywords: Joi.array()
+    .items(
+      Joi.string()
+        .trim()
+        .max(50)
+    )
+    .max(10)
+    .default([])
+    .messages({
+      "array.max":
+        "Maximum 10 meta keywords allowed",
+    }),
+}).default({});
+
 export const createToolSchema = Joi.object({
   name: Joi.string().required(),
 
   slug: Joi.string()
     .regex(/^[a-z0-9-]+$/)
     .required(),
+
+  seo: seoSchema.optional(),
 
   images: Joi.any().optional(),
 

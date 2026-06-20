@@ -1,38 +1,32 @@
-// middleware/parseMultipartJson.js
-
 export const parseMultipartJson = (
   req,
   res,
   next
 ) => {
-      console.log(
-    "parseMultipartJson reached"
-  );
   try {
 
-    if (req.body.meta) {
-      req.body.meta =
-        JSON.parse(req.body.meta);
-    }
+    const jsonFields = [
+      "meta",
+      "tools",
+      "faq",
+      "catImage",
+      "seo",
+    ];
 
-    if (req.body.tools) {
-      req.body.tools =
-        JSON.parse(req.body.tools);
-    }
+    jsonFields.forEach((field) => {
 
-    if (req.body.faq) {
-      req.body.faq =
-        JSON.parse(req.body.faq);
-    }
+      const value =
+        req.body[field];
 
-    if (
-      req.body.catImage &&
-      typeof req.body.catImage ===
+      if (
+        typeof value ===
         "string"
-    ) {
-      req.body.catImage =
-        JSON.parse(req.body.catImage);
-    }
+      ) {
+        req.body[field] =
+          JSON.parse(value);
+      }
+
+    });
 
     next();
 

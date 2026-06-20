@@ -15,6 +15,25 @@ const toolSchema = new mongoose.Schema(
       index: true,
     },
 
+    seo: {
+      metaTitle: {
+        type: String,
+        default: "",
+        trim: true,
+      },
+
+      metaDescription: {
+        type: String,
+        default: "",
+        trim: true,
+      },
+
+      metaKeywords: {
+        type: [String],
+        default: [],
+      },
+    },
+
     images: {
       tool: {
         url: {
