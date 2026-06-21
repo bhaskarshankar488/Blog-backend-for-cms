@@ -16,6 +16,8 @@ from "./public/routes/public.routes.js";
 
 import toolContentRoutes from "./routes/toolContent.routes.js"; 
 
+import Alternative from "./feature/alternative/alternative.routes.js";
+
 
 const allowedOrigins = [
   "http://localhost:3000",
@@ -62,6 +64,8 @@ app.use(
   "/api/tool-content",
   toolContentRoutes
 );
+
+app.use("/api/alternatve", Alternative);
 
 
 
