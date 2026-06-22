@@ -1,7 +1,7 @@
 import Alternative from "./alternative.model.js";
 
-export const createAlternative = async (data,userId) => {
-  const existing =await Alternative.findOne({slug: data.slug,});
+export const createAlternative = async (data, userId) => {
+  const existing = await Alternative.findOne({ slug: data.slug, });
 
   if (existing) {
     const error = new Error(
@@ -12,10 +12,10 @@ export const createAlternative = async (data,userId) => {
   }
 
   const alternative = await Alternative.create({
-      ...data,
-      createdBy: userId,
-      updatedBy: userId,
-    });
+    ...data,
+    createdBy: userId,
+    updatedBy: userId,
+  });
 
   return {
     message:
@@ -39,11 +39,11 @@ export const updateAlternative = async (
     throw error;
   }
 
-  if (data.slug &&data.slug !== alternative.slug) {
+  if (data.slug && data.slug !== alternative.slug) {
     const slugExists = await Alternative.findOne({
-        slug: data.slug,
-        _id: { $ne: id },
-      });
+      slug: data.slug,
+      _id: { $ne: id },
+    });
 
     if (slugExists) {
       const error = new Error(
@@ -55,16 +55,16 @@ export const updateAlternative = async (
   }
 
   const updated = await Alternative.findByIdAndUpdate(
-      id,
-      {
-        ...data,
-        updatedBy: userId,
-      },
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
+    id,
+    {
+      ...data,
+      updatedBy: userId,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
 
   return {
     message:
@@ -78,7 +78,8 @@ export const getAlternativeById =
     const alternative =
       await Alternative.findById(id)
         .populate(
-          "tools.toolId"
+          "tools.toolId",
+          "name brand slug customDescription position"
         )
         .populate(
           "createdBy",
