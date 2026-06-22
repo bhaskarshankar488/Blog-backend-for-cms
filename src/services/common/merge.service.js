@@ -14,7 +14,7 @@ export const mergeTools = async (page) => {
     return {
       name: tool.name,
       slug: slugify(tool.name),
-      image: tool.image.url,
+      image: tool.images.tool.url,
       brand: tool.brand,
       tags: tool.tags,
       customDescription: t.customDescription || tool.globalDescription,
