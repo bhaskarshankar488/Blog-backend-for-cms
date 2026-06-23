@@ -11,6 +11,8 @@ export const createAlternativeSchema =
             .trim()
             .required(),
 
+        toolId: objectId.required().messages({ "any.required": "Main tool is required", }),
+
         slug: Joi.string()
             .trim()
             .required(),
@@ -85,7 +87,12 @@ export const createAlternativeSchema =
 
 export const updateAlternativeSchema =
     Joi.object({
+
+        toolId: objectId.required().messages({ "any.required": "Main tool is required", }),
+
         title: Joi.string().trim(),
+
+        toolId: objectId.optional(),
 
         slug: Joi.string().trim(),
 

@@ -33,7 +33,11 @@ const alternativeSchema =
                 required: true,
                 trim: true,
             },
-
+            toolId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Tool",
+                required: true,
+            },
             slug: {
                 type: String,
                 required: true,

@@ -16,6 +16,26 @@ export const toolContentIdSchema =
       objectId.required(),
   });
 
+export const alternativeToolSchema =
+  Joi.object({
+    alternativeId: objectId
+      .required()
+      .messages({
+        "any.required":
+          "Alternative ID is required",
+        "string.pattern.base":
+          "Invalid Alternative ID",
+      }),
+
+    isSponsored: Joi.boolean()
+      .default(false),
+
+    position: Joi.number()
+      .integer()
+      .min(1)
+      .required(),
+  });
+
 export const createToolContentSchema =
   Joi.object({
     toolId: Joi.string()
@@ -23,6 +43,10 @@ export const createToolContentSchema =
       .required(),
 
     hero: Joi.object().optional(),
+
+    alternativeTools: Joi.array()
+      .items(alternativeToolSchema)
+      .default([]),
 
     coreCapabilities:
       Joi.array().optional(),

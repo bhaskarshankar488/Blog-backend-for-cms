@@ -1,5 +1,30 @@
 import mongoose from "mongoose";
 
+const alternativeToolSchema =
+  new mongoose.Schema(
+    {
+      alternativeId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Alternative",
+        required: true,
+      },
+
+      isSponsored: {
+        type: Boolean,
+        default: false,
+      },
+
+      position: {
+        type: Number,
+        required: true,
+        min: 1,
+      },
+    },
+    {
+      _id: false,
+    }
+  );
+
 const toolContentSchema =
   new mongoose.Schema(
     {
@@ -8,6 +33,10 @@ const toolContentSchema =
         ref: "Tool",
         required: true,
         unique: true,
+      },
+      alternativeTools: {
+        type: [alternativeToolSchema],
+        default: [],
       },
 
       hero: {

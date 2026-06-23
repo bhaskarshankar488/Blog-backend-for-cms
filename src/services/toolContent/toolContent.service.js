@@ -57,6 +57,16 @@ export const getToolContent = async (
   const content =
     await ToolContent.findOne({
       toolId,
+    }).populate({
+      path:
+        "alternativeTools.alternativeId",
+
+      select:
+        "title slug image",
+      populate: {
+        path: "toolId",
+        select: "images.tool.url",
+      },
     });
 
   if (!content) {

@@ -1,6 +1,6 @@
 import * as alternativeService from "./alternative.service.js";
 
-import {successResponse,errorResponse,} from "../../utils/responseHandler.js";
+import { successResponse, errorResponse, } from "../../utils/responseHandler.js";
 
 export const createAlternative =
   async (req, res) => {
@@ -75,8 +75,12 @@ export const getAlternativeById =
 export const getAlternatives =
   async (req, res) => {
     try {
+      const { search } = req.query;
+
       const result =
-        await alternativeService.getAlternatives();
+        await alternativeService.getAlternatives(
+          search
+        );
 
       return successResponse(
         res,
