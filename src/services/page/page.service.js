@@ -26,6 +26,46 @@ export const createPage = async (data, userId) => {
   return serviceSuccess(page, "Page created successfully");
 };
 
+
+// UPDATE PAGE
+export const updatePage = async (
+  pageId,
+  data,
+  userId
+) => {
+  const page = await Page.findById(pageId);
+
+  if (!page) {
+    throw serviceError("Page not found", 404);
+  }
+
+  if (data.categoryId) {
+    const category = await Category.findById(
+      data.categoryId
+    );
+
+    if (!category) {
+      throw serviceError("Invalid category", 400);
+    }
+  }
+
+  const updated = await Page.findByIdAndUpdate(
+    pageId,
+    {
+      ...data,
+      updatedBy: userId,
+    },
+    {
+      new: true,
+    }
+  );
+
+  return serviceSuccess(
+    updated,
+    "Page updated successfully"
+  );
+};
+
 // GET PUBLIC PAGE
 export const getPageBySlug = async (slug) => {
   const page = await Page.findOne({
@@ -76,44 +116,7 @@ export const getPageByCategoryAndSlug = async (categorySlug, pageSlug) => {
   return serviceSuccess(response, "Page fetched successfully");
 };
 
-// UPDATE PAGE
-export const updatePage = async (
-  pageId,
-  data,
-  userId
-) => {
-  const page = await Page.findById(pageId);
 
-  if (!page) {
-    throw serviceError("Page not found", 404);
-  }
-
-  if (data.categoryId) {
-    const category = await Category.findById(
-      data.categoryId
-    );
-
-    if (!category) {
-      throw serviceError("Invalid category", 400);
-    }
-  }
-
-  const updated = await Page.findByIdAndUpdate(
-    pageId,
-    {
-      ...data,
-      updatedBy: userId,
-    },
-    {
-      new: true,
-    }
-  );
-
-  return serviceSuccess(
-    updated,
-    "Page updated successfully"
-  );
-};
 
 // DELETE PAGE
 export const deletePage = async (pageId) => {

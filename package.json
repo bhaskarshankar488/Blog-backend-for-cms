@@ -8,6 +8,7 @@
     "start": "node src/server.js",
     "setup": "node scripts/setup.js",
     "dev": "nodemon src/server.js",
+     "migrate:tool-categories": "node src/scripts/migrate-tool-categories.js",
     "migrate": "sequelize-cli db:migrate",
     "reset": "npx sequelize-cli db:migrate:undo:all --config src/config/config.cjs && node scripts/setup.js"
   },

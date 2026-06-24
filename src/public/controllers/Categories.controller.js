@@ -13,11 +13,12 @@ export const getCategories = async (
     const result =
       await publicService.getCategories();
 
-    return successResponse(
-      res,
-      result.message,
-      result.data
-    );
+    return res.status(200).json({
+      success: true,
+      message: result.message,
+      summary: result.summary,
+      data: result.data,
+    });
   } catch (error) {
     return errorResponse(
       res,
@@ -26,7 +27,6 @@ export const getCategories = async (
     );
   }
 };
-
 export const getCategoryBySlug =
   async (req, res) => {
     try {
@@ -72,3 +72,69 @@ export const getPageByCategoryAndSlug = async (req, res) => {
     );
   }
 };
+
+
+// get tool for toll page minimal imformation
+
+export const getToolsByCategorySlug =
+  async (req, res) => {
+    try {
+      const { categorySlug } = req.params;
+
+      const page = Number(req.query.page);
+      const limit = Number(req.query.limit);
+
+      const result =
+        await publicService.getToolsByCategorySlug(
+          categorySlug,
+          page,
+          limit
+        );
+
+      return res.status(200).json({
+        success: true,
+        message: result.message,
+        category: result.category,
+        pagination: result.pagination,
+        data: result.data,
+      });
+    } catch (error) {
+      return errorResponse(
+        res,
+        error.message,
+        error.status || 500
+      );
+    }
+  };
+
+  
+
+ export const getToolByCategoryAndSlug =
+  async (req, res) => {
+    try {
+      const {
+        categorySlug,
+        toolSlug,
+      } = req.params;
+
+      const result =
+        await publicService.getToolByCategoryAndSlug(
+          categorySlug,
+          toolSlug
+        );
+
+      return res.status(200).json({
+        success: true,
+        message: result.message,
+        data: result.data,
+      });
+    } catch (error) {
+      return errorResponse(
+        res,
+        error.message,
+        error.status || 500
+      );
+    }
+  };
+
+  

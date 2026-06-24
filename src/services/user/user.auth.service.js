@@ -23,6 +23,7 @@ export const loginUser = async ({ email, password }) => {
     name: user.name,
     role: user.role,
   };
+  
 };
 
 // LOGOUT SERVICE (session-based)
