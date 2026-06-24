@@ -25,6 +25,22 @@ const alternativeToolSchema =
         }
     );
 
+
+const imageSchema = new mongoose.Schema(
+    {
+        url: {
+            type: String,
+            default: "",
+        },
+        public_id: {
+            type: String,
+            default: "",
+        },
+    },
+    { _id: false }
+);
+
+
 const alternativeSchema =
     new mongoose.Schema(
         {
@@ -33,11 +49,7 @@ const alternativeSchema =
                 required: true,
                 trim: true,
             },
-            toolId: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "Tool",
-                required: true,
-            },
+
             slug: {
                 type: String,
                 required: true,
@@ -50,6 +62,11 @@ const alternativeSchema =
                 type: String,
                 default: "",
                 trim: true,
+            },
+
+            images: {
+                hero:imageSchema,
+                faq:imageSchema,
             },
 
             seo: {

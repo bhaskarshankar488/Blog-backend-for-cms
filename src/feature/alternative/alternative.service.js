@@ -19,23 +19,6 @@ export const createAlternative = async (
     throw error;
   }
 
-  const hasMainTool =
-    data.tools?.some(
-      (item) =>
-        item.toolId.toString() ===
-        data.toolId.toString()
-    );
-
-  if (hasMainTool) {
-    const error =
-      new Error(
-        "Main tool cannot be added as an alternative tool"
-      );
-
-    error.status = 400;
-    throw error;
-  }
-
   const alternative =
     await Alternative.create({
       ...data,
@@ -78,23 +61,6 @@ export const updateAlternative = async (
       error.status = 409;
       throw error;
     }
-  }
-
-  const hasMainTool =
-    data.tools?.some(
-      (item) =>
-        item.toolId.toString() ===
-        data.toolId.toString()
-    );
-
-  if (hasMainTool) {
-    const error =
-      new Error(
-        "Main tool cannot be added as an alternative tool"
-      );
-
-    error.status = 400;
-    throw error;
   }
 
   const updated = await Alternative.findByIdAndUpdate(

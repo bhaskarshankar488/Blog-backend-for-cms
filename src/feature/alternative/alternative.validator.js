@@ -5,13 +5,26 @@ const objectId =
         .hex()
         .length(24);
 
+const imageSchema = Joi.object({
+    url: Joi.string()
+        .allow("")
+        .default(""),
+
+    public_id: Joi.string()
+        .allow("")
+        .default(""),
+});
+
 export const createAlternativeSchema =
     Joi.object({
         title: Joi.string()
             .trim()
             .required(),
 
-        toolId: objectId.required().messages({ "any.required": "Main tool is required", }),
+        images: Joi.object({
+            hero: imageSchema,
+            faq: imageSchema,
+        }).default({}).optional(),
 
         slug: Joi.string()
             .trim()
@@ -88,9 +101,12 @@ export const createAlternativeSchema =
 export const updateAlternativeSchema =
     Joi.object({
 
-        toolId: objectId.required().messages({ "any.required": "Main tool is required", }),
-
         title: Joi.string().trim(),
+
+        images: Joi.object({
+            hero: imageSchema,
+            faq: imageSchema,
+        }).default({}).optional(),
 
         toolId: objectId.optional(),
 

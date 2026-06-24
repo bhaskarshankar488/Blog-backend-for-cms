@@ -15,13 +15,25 @@ import {
     alternativeIdSchema,
 } from "./alternative.validator.js";
 
-import {validate,
-} from "../../middlewares/validate.middleware.js";
+import {validate,} from "../../middlewares/validate.middleware.js";
+import { upload } from "../../middlewares/upload.middleware.js";
+import{parseMultipartJson,} from "../../middlewares/parseMultipartJson.js"
 
 const router = express.Router();
 
 router.post("/",
     isAuthenticated,
+    upload.fields([
+        {
+            name: "hero_image",
+            maxCount: 1,
+        },
+        {
+            name: "faq_image",
+            maxCount: 1,
+        },
+    ]),
+    parseMultipartJson,
     validate(createAlternativeSchema),
     createAlternative);
 
@@ -30,15 +42,25 @@ router.get("/",
     getAlternatives);
 
 router.get("/:id",
-    validate(
-        alternativeIdSchema, "params"),
     isAuthenticated,
+    validate(alternativeIdSchema, "params"),
     getAlternativeById);
 
 router.put("/:id",
+    isAuthenticated,
+    upload.fields([
+        {
+            name: "hero_image",
+            maxCount: 1,
+        },
+        {
+            name: "faq_image",
+            maxCount: 1,
+        },
+    ]),
+    parseMultipartJson,
     validate(alternativeIdSchema, "params"),
     validate(updateAlternativeSchema),
-    isAuthenticated,
     updateAlternative);
 
 router.delete("/:id",

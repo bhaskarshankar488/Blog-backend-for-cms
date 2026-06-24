@@ -5,7 +5,7 @@ const alternativeToolSchema =
     {
       alternativeId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Alternative",
+        ref: "Tool",
         required: true,
       },
 

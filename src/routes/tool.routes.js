@@ -1,7 +1,8 @@
 import express from "express";
 import {
   createTool, getTools, updateTool, deleteTool,
-  getToolById
+  getToolById,
+  getToolssearch
 } from "../controllers/tool.controller.js";
 
 import { validate } from "../middlewares/validate.middleware.js";
@@ -52,7 +53,8 @@ router.put(
   updateTool
 );
 
-// GET TOOLS (SEARCH)
+// GET TOOLS
+
 router.get(
   "/",
   isAuthenticated,
@@ -60,7 +62,14 @@ router.get(
   validate(getToolsSchema, "query"),
   getTools
 );
-
+// GET TOOLS (SEARCH)
+router.get(
+  "/search/",
+  isAuthenticated,
+  checkPermission("tools", "read"),
+  validate(getToolsSchema, "query"),
+  getToolssearch
+);
 
 router.delete(
   "/:id",

@@ -1,54 +1,104 @@
 import * as alternativeService from "./alternative.service.js";
+import {successResponse,errorResponse,} from "../../utils/responseHandler.js";
+import {uploadImage,} from "../../utils/uploadImage.js";
+import Alternative from "./alternative.model.js";
+import { deleteFromCloudinary} from "../../utils/cloudinary.js"
 
-import { successResponse, errorResponse, } from "../../utils/responseHandler.js";
+export const createAlternative = async (
+  req,
+  res
+) => {
+  try {
+    const files = req.files;
 
-export const createAlternative =
-  async (req, res) => {
-    try {
-      const result =
-        await alternativeService.createAlternative(
-          req.body,
-          req.user.id
-        );
+    const images = {
+      hero: await uploadImage(
+        files?.hero_image?.[0]
+      ),
 
-      return successResponse(
-        res,
-        result.message,
-        result.data,
-        201
+      faq: await uploadImage(
+        files?.faq_image?.[0]
+      ),
+    };
+
+    req.body.images = images;
+
+    const result =
+      await alternativeService.createAlternative(
+        req.body,
+        req.user.id
       );
-    } catch (error) {
+
+    return successResponse(
+      res,
+      result.message,
+      result.data,
+      201
+    );
+  } catch (error) {
+    return errorResponse(
+      res,
+      error.message,
+      error.status || 500
+    );
+  }
+};
+
+export const updateAlternative = async (
+  req,
+  res
+) => {
+  try {
+    const alternative =
+      await Alternative.findById(
+        req.params.id
+      );
+
+    if (!alternative) {
       return errorResponse(
         res,
-        error.message,
-        error.status || 500
+        "Alternative not found",
+        404
       );
     }
-  };
 
-export const updateAlternative =
-  async (req, res) => {
-    try {
-      const result =
-        await alternativeService.updateAlternative(
-          req.params.id,
-          req.body,
-          req.user.id
-        );
+    let images =
+      alternative.images || {};
 
-      return successResponse(
-        res,
-        result.message,
-        result.data
-      );
-    } catch (error) {
-      return errorResponse(
-        res,
-        error.message,
-        error.status || 500
+    const imageFields = [
+      ["hero", "hero_image"],
+      ["faq", "faq_image"],
+    ];
+
+    for (const [key, fieldName] of imageFields) {
+      images[key] = await replaceImage(
+        images[key],
+        req.files?.[fieldName]?.[0]
       );
     }
-  };
+
+    req.body.images = images;
+
+    const result =
+      await alternativeService.updateAlternative(
+        req.params.id,
+        req.body,
+        req.user.id
+      );
+
+    return successResponse(
+      res,
+      result.message,
+      result.data
+    );
+  } catch (error) {
+    return errorResponse(
+      res,
+      error.message,
+      error.status || 500
+    );
+  }
+};
 
 export const getAlternativeById =
   async (req, res) => {
@@ -99,6 +149,37 @@ export const getAlternatives =
 export const deleteAlternative =
   async (req, res) => {
     try {
+      const alternative =
+        await Alternative.findById(
+          req.params.id
+        );
+
+      if (!alternative) {
+        return errorResponse(
+          res,
+          "Alternative not found",
+          404
+        );
+      }
+
+      const images =
+        alternative.images || {};
+
+      const imageKeys = [
+        "hero",
+        "faq",
+      ];
+
+      for (const key of imageKeys) {
+        if (
+          images[key]?.public_id
+        ) {
+          await deleteFromCloudinary(
+            images[key].public_id
+          );
+        }
+      }
+
       const result =
         await alternativeService.deleteAlternative(
           req.params.id

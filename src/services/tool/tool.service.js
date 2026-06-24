@@ -45,6 +45,45 @@ export const getTools = async (search) => {
   );
 };
 
+export const getToolssearch = async (search) => {
+  let query = {};
+
+  // ✅ Search support
+  if (search && search.trim() !== "") {
+    query = {
+      $or: [
+        { name: { $regex: search, $options: "i" } },
+        { slug: { $regex: search, $options: "i" } },
+        { brand: { $regex: search, $options: "i" } },
+      ],
+    };
+  }
+
+  const tools = await Tool.find(query)
+    .select("name slug images.tool.url brand updatedAt createdAt")
+
+    // ✅ Latest updated first
+    .sort({ updatedAt: -1, createdAt: -1 })
+
+    // ✅ Limit 20 tools
+    .limit(20);
+
+  const transformedTools = tools.map((tool) => ({
+    id: tool._id,
+    name: tool.name,
+    slug: tool.slug,
+    brand: tool.brand,
+    image:
+      tool.images?.tool?.url || "",
+  })
+  );
+
+  return serviceSuccess(
+    transformedTools,
+    "Tools fetched successfully"
+  );
+};
+
 export const updateTool = async (id, data) => {
   const tool = await Tool.findById(id);
 
