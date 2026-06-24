@@ -126,67 +126,67 @@ export const getCategories = async () => {
   };
 };
 
-export const getCategoryBySlug = async (slug) => {
-  const category = await Category.findOne({
-    slug,
-  })
-    .select(
-      "name slug title description seoTitle seoDescription seoKeywords"
-    )
-    .lean();
+// export const getCategoryBySlug = async (slug) => {
+//   const category = await Category.findOne({
+//     slug,
+//   })
+//     .select(
+//       "name slug title description seoTitle seoDescription seoKeywords"
+//     )
+//     .lean();
 
-  if (!category) {
-    throw {
-      status: 404,
-      message: "Category not found",
-    };
-  }
+//   if (!category) {
+//     throw {
+//       status: 404,
+//       message: "Category not found",
+//     };
+//   }
 
-  const pages = await Page.find({
-    categoryId: category._id,
-    status: "published",
-  })
-    .select(
-      "title slug categoryDescription catImage.url createdAt status"
-    )
-    .sort({
-      createdAt: -1,
-    })
-    .lean();
+//   const pages = await Page.find({
+//     categoryId: category._id,
+//     status: "published",
+//   })
+//     .select(
+//       "title slug categoryDescription catImage.url createdAt status"
+//     )
+//     .sort({
+//       createdAt: -1,
+//     })
+//     .lean();
 
-  return {
-    message: "Category fetched successfully",
-    data: {
-      category,
-      pages,
-    },
-  };
-};
+//   return {
+//     message: "Category fetched successfully",
+//     data: {
+//       category,
+//       pages,
+//     },
+//   };
+// };
 
-// GET PUBLIC PAGE
-export const getPageByCategoryAndSlug = async (categorySlug, pageSlug) => {
-  const category = await Category.findOne({ slug: categorySlug });
+// // GET PUBLIC PAGE
+// export const getPageByCategoryAndSlug = async (categorySlug, pageSlug) => {
+//   const category = await Category.findOne({ slug: categorySlug });
 
-  if (!category) {
-    throw serviceError("Category not found", 404);
-  }
+//   if (!category) {
+//     throw serviceError("Category not found", 404);
+//   }
 
-  const page = await Page.findOne({
-    slug: pageSlug,
-    categoryId: category._id,
-    status: "published",
-  });
+//   const page = await Page.findOne({
+//     slug: pageSlug,
+//     categoryId: category._id,
+//     status: "published",
+//   });
 
-  if (!page) {
-    throw serviceError("Page not found", 404);
-  }
+//   if (!page) {
+//     throw serviceError("Page not found", 404);
+//   }
 
-  const mergedTools = await mergeTools(page);
+//   const mergedTools = await mergeTools(page);
 
-  const response = buildPageResponse(page, category, mergedTools);
+//   const response = buildPageResponse(page, category, mergedTools);
 
-  return serviceSuccess(response, "Page fetched successfully");
-};
+//   return serviceSuccess(response, "Page fetched successfully");
+// };
 
 // get tool for tool listing page minimal information
 
@@ -299,7 +299,7 @@ export const getToolsByCategorySlug =
   };
 
 
-  export const getToolByCategoryAndSlug =
+export const getToolByCategoryAndSlug =
   async (
     categorySlug,
     toolSlug
@@ -405,37 +405,37 @@ export const getToolsByCategorySlug =
     const transformedContent =
       toolContent
         ? {
-            ...toolContent,
+          ...toolContent,
 
-            alternativeTools:
-              toolContent.alternativeTools.map(
-                (item) => ({
-                  _id:
-                    item.alternativeId
-                      ?._id,
+          alternativeTools:
+            toolContent.alternativeTools.map(
+              (item) => ({
+                _id:
+                  item.alternativeId
+                    ?._id,
 
-                  name:
-                    item.alternativeId
-                      ?.name,
+                name:
+                  item.alternativeId
+                    ?.name,
 
-                  slug:
-                    item.alternativeId
-                      ?.slug,
+                slug:
+                  item.alternativeId
+                    ?.slug,
 
-                  image:
-                    item
-                      .alternativeId
-                      ?.images?.tool
-                      ?.url || "",
+                image:
+                  item
+                    .alternativeId
+                    ?.images?.tool
+                    ?.url || "",
 
-                  isSponsored:
-                    item.isSponsored,
+                isSponsored:
+                  item.isSponsored,
 
-                  position:
-                    item.position,
-                })
-              ),
-          }
+                position:
+                  item.position,
+              })
+            ),
+        }
         : null;
 
     return {
@@ -451,3 +451,115 @@ export const getToolsByCategorySlug =
       },
     };
   };
+
+// page list and page data 
+
+
+export const getPagesByCategorySlug =
+  async (
+    categorySlug,
+    page,
+    limit
+  ) => {
+    const category =
+      await Category.findOne({
+        slug: categorySlug,
+      }).lean();
+
+    if (!category) {
+      const error = new Error(
+        "Category not found"
+      );
+
+      error.status = 404;
+      throw error;
+    }
+
+    const query = {
+      categoryId: category._id,
+    };
+
+    const totalPages =
+      await Page.countDocuments(
+        query
+      );
+
+    let pageQuery = Page.find(query)
+      .select({
+        title: 1,
+        slug: 1,
+        categoryDescription: 1,
+        catImage: 1,
+ 
+        status: 1,
+        createdAt: 1,
+        updatedAt: 1,
+      })
+      .sort({
+        createdAt: -1,
+      });
+
+    // Optional Pagination
+    if (page && limit) {
+      const skip =
+        (Number(page) - 1) *
+        Number(limit);
+
+      pageQuery = pageQuery
+        .skip(skip)
+        .limit(Number(limit));
+    }
+
+    const pages =
+      await pageQuery.lean();
+
+    const transformedPages =
+      pages.map((page) => ({
+        title: page.title,
+        slug: page.slug,
+
+        categoryDescription:
+          page.categoryDescription,
+
+        catImage:
+          page.catImage || "",
+
+     
+
+        status: page.status,
+
+        createdAt:
+          page.createdAt,
+
+        updatedAt:
+          page.updatedAt,
+      }));
+
+    const response = {
+      message:
+        "Pages fetched successfully",
+
+      category: {
+        _id: category._id,
+        name: category.name,
+        slug: category.slug,
+        totalPages,
+      },
+
+      data: transformedPages,
+    };
+
+    if (page && limit) {
+      response.pagination = {
+        page: Number(page),
+        limit: Number(limit),
+        totalItems: totalPages,
+        totalPages: Math.ceil(
+          totalPages / limit
+        ),
+      };
+    }
+
+    return response;
+  };
+
