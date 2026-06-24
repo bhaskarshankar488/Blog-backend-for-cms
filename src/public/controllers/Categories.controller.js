@@ -1,4 +1,4 @@
-import * as publicService from "../services/public.service.js";
+import * as publicService from "../services/Categories.service.js";
 
 import {
   successResponse,

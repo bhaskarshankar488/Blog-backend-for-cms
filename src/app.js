@@ -11,8 +11,7 @@ import pageRoutes from "./routes/page.routes.js";
 import revalidateRoutes from "./routes/revalidate.routes.js";  
 import { sessionMiddleware} from "./config/session.js";
 import categoryRoutes from "./routes/category.routes.js";
-import publicRoutes
-from "./public/routes/public.routes.js";
+import publicRoutes from "./public/routes/Categories.routes.js";
 
 import toolContentRoutes from "./routes/toolContent.routes.js"; 
 

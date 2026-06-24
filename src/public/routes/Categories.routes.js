@@ -4,7 +4,7 @@ import {
   getCategories,
   getCategoryBySlug,
   getPageByCategoryAndSlug
-} from "../controllers/public.controller.js";
+} from "../controllers/Categories.controller.js";
 
 const router = express.Router();
 
