@@ -1,5 +1,5 @@
 import * as publicService from "../services/Categories.service.js";
-import {getPageBySlug} from "../../services/page/page.service.js"
+import {getPageByCategoryAndSlug as getPageByCategoryAndSlugService,} from "../../services/page/page.service.js"
 
 import {
   successResponse,
@@ -141,7 +141,8 @@ export const getToolsByCategorySlug =
       } = req.params;
 
       const result =
-        await getPageBySlug(
+        await getPageByCategoryAndSlugService(
+          categorySlug,
           pageSlug
         );
 
