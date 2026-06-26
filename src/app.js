@@ -12,6 +12,7 @@ import revalidateRoutes from "./routes/revalidate.routes.js";
 import { sessionMiddleware} from "./config/session.js";
 import categoryRoutes from "./routes/category.routes.js";
 import publicRoutes from "./public/routes/Categories.routes.js";
+import toolPublicRoutes from "./public/routes/tools.route.js";
 
 import toolContentRoutes from "./routes/toolContent.routes.js"; 
 
@@ -72,7 +73,7 @@ app.use("/api/alternatve", Alternative);
 
 app.use(
   "/api/public",
-  publicRoutes
+  publicRoutes, toolPublicRoutes,
 );
 
 export default app;
