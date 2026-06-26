@@ -79,7 +79,7 @@ export const updateTool = async (req, res) => {
 
 export const getToolssearch = async (req, res) => {
   try {
-    const result = await toolService.getTools(req.query.search);
+    const result = await toolService.getToolssearch(req.query.search);
     return successResponse(res, result.message, result.data);
   } catch (error) {
     return errorResponse(res, error.message, error.status || 500);
