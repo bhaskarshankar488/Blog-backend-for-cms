@@ -6,19 +6,28 @@ import {
 } from "../../utils/responseHandler.js";
 
 // Get all tools (minimal information)
-
 export const getTools = async (req, res) => {
   try {
-    const page = Number(req.query.page);
-    const limit = Number(req.query.limit);
-
-    const result = await toolService.getTools(
+    const {
       page,
-      limit
-    );
+      limit,
+      category,
+      pricingLabel,
+      search,
+    } = req.query;
+
+    const result = await toolService.getTools({
+      page,
+      limit,
+      category,
+      pricingLabel,
+      search,
+    });
+
     return res.status(200).json({
       success: true,
       message: result.message,
+      filters: result.filters,
       totalTools: result.totalTools,
       pagination: result.pagination,
       data: result.data,

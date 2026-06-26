@@ -11,4 +11,12 @@ export const getToolsPublicSchema = Joi.object({
     .min(1)
     .max(100)
     .default(100),
+
+  category: Joi.string()
+    .trim()
+    .optional(),
+
+  pricingLabel: Joi.string()
+    .valid("Free", "Freemium", "Paid")
+    .optional(),
 });

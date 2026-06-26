@@ -1,7 +1,14 @@
 import { Tool } from "../../models/tool.model.js";
 import { ToolContent } from "../../models/toolContent.model.js";
+import { Category } from "../../models/category.model.js";
 
-export const getTools = async (page = 1, limit = 100) => {
+export const getTools = async ({
+  page = 1,
+  limit = 100,
+  category,
+  pricingLabel,
+  search,
+}) => {
   page = Number(page) || 1;
   limit = Number(limit) || 100;
 
@@ -10,13 +17,63 @@ export const getTools = async (page = 1, limit = 100) => {
 
   const skip = (page - 1) * limit;
 
-  const totalTools = await Tool.countDocuments();
+  const query = {};
+  const filters = {};
 
-  const tools = await Tool.find()
+  // Category Filter
+  if (category) {
+    const categoryDoc = await Category.findOne({
+      slug: category,
+    }).select("_id name slug");
+
+    if (!categoryDoc) {
+      const error = new Error("Category not found");
+      error.status = 404;
+      throw error;
+    }
+
+    query.categoryId = categoryDoc._id;
+
+    filters.category = {
+      name: categoryDoc.name,
+      slug: categoryDoc.slug,
+    };
+  }
+
+  // Pricing Filter
+  if (pricingLabel) {
+    query.pricingLabel = pricingLabel;
+
+    filters.pricingLabel = pricingLabel;
+  }
+
+  // Search Filter
+  if (search) {
+    query.$or = [
+      {
+        name: {
+          $regex: search,
+          $options: "i",
+        },
+      },
+      {
+        brand: {
+          $regex: search,
+          $options: "i",
+        },
+      },
+    ];
+
+    filters.search = search;
+  }
+
+  const totalTools = await Tool.countDocuments(query);
+
+  const tools = await Tool.find(query)
+    .populate("categoryId", "_id name slug")
     .select({
       name: 1,
       slug: 1,
-      seo: 1,
       "images.tool.url": 1,
       brand: 1,
       link: 1,
@@ -24,9 +81,11 @@ export const getTools = async (page = 1, limit = 100) => {
       pricingLabel: 1,
       ratingValue: 1,
       tags: 1,
+      categoryId: 1,
       createdAt: 1,
       updatedAt: 1,
     })
+    .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit)
     .lean();
@@ -34,6 +93,13 @@ export const getTools = async (page = 1, limit = 100) => {
   const formattedTools = tools.map((tool) => ({
     name: tool.name,
     slug: tool.slug,
+
+    category: {
+      _id: tool.categoryId?._id,
+      name: tool.categoryId?.name,
+      slug: tool.categoryId?.slug,
+    },
+
     image: tool.images?.tool?.url || "",
     brand: tool.brand,
     link: tool.link,
@@ -45,21 +111,25 @@ export const getTools = async (page = 1, limit = 100) => {
     updatedAt: tool.updatedAt,
   }));
 
-return {
-  message: "Tools fetched successfully",
-  totalTools,
-  data: formattedTools,
-  pagination: {
-    page,
-    limit,
-    totalItems: totalTools,
-    totalPages: Math.ceil(totalTools / limit),
-    hasNextPage: page < Math.ceil(totalTools / limit),
-    hasPreviousPage: page > 1,
-  },
-};
-};
+  return {
+    message: "Tools fetched successfully",
 
+    filters,
+
+    totalTools,
+
+    pagination: {
+      page,
+      limit,
+      totalItems: totalTools,
+      totalPages: Math.ceil(totalTools / limit),
+      hasNextPage: page < Math.ceil(totalTools / limit),
+      hasPreviousPage: page > 1,
+    },
+
+    data: formattedTools,
+  };
+};
 //get tool wuth cintentent single tool
 
 export const getToolBySlug = async (toolSlug) => {
@@ -118,16 +188,16 @@ export const getToolBySlug = async (toolSlug) => {
 
   const transformedContent = toolContent
     ? {
-        ...toolContent,
-        alternativeTools: toolContent.alternativeTools.map((item) => ({
-          _id: item.alternativeId?._id,
-          name: item.alternativeId?.name,
-          slug: item.alternativeId?.slug,
-          image: item.alternativeId?.images?.tool?.url || "",
-          isSponsored: item.isSponsored,
-          position: item.position,
-        })),
-      }
+      ...toolContent,
+      alternativeTools: toolContent.alternativeTools.map((item) => ({
+        _id: item.alternativeId?._id,
+        name: item.alternativeId?.name,
+        slug: item.alternativeId?.slug,
+        image: item.alternativeId?.images?.tool?.url || "",
+        isSponsored: item.isSponsored,
+        position: item.position,
+      })),
+    }
     : null;
 
   return {
