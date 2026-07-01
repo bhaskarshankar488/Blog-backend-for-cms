@@ -10,7 +10,7 @@ export const toolIdSchema = Joi.object({
 export const seoSchema = Joi.object({
   metaTitle: Joi.string()
     .trim()
-    .max(60)
+    .max(1000)
     .allow("")
     .messages({
       "string.max":
@@ -19,7 +19,7 @@ export const seoSchema = Joi.object({
 
   metaDescription: Joi.string()
     .trim()
-    .max(160)
+    .max(1000)
     .allow("")
     .messages({
       "string.max":
@@ -30,7 +30,7 @@ export const seoSchema = Joi.object({
     .items(
       Joi.string()
         .trim()
-        .max(50)
+        .max(1000)
     )
     .max(10)
     .default([])
