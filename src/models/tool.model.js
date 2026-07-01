@@ -85,6 +85,11 @@ const toolSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    
+    ProductDescription: {
+      type: String,
+      default: "",
+    },
 
     pricingLabel: {
       type: String,

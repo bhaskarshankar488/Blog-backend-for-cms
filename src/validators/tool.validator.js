@@ -59,6 +59,9 @@ export const createToolSchema = Joi.object({
 
   globalDescription: Joi.string()
     .allow("", null),
+    
+   ProductDescription: Joi.string()
+    .allow("", null),
 
   // NEW FIELDS
   pricingLabel: Joi.string()
