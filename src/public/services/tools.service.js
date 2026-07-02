@@ -78,7 +78,6 @@ export const getTools = async ({
       brand: 1,
       link: 1,
       globalDescription: 1,
-      ProductDescription: 1,
       pricingLabel: 1,
       ratingValue: 1,
       tags: 1,
@@ -105,7 +104,6 @@ export const getTools = async ({
     brand: tool.brand,
     link: tool.link,
     globalDescription: tool.globalDescription,
-    ProductDescription: tool.ProductDescription,
     pricingLabel: tool.pricingLabel,
     ratingValue: tool.ratingValue,
     tags: tool.tags,
@@ -169,6 +167,7 @@ export const getToolBySlug = async (toolSlug) => {
     brand: tool.brand,
     link: tool.link,
     globalDescription: tool.globalDescription,
+    ProductDescription: tool.ProductDescription,
     whatIsIt: tool.whatIsIt,
     pricingLabel: tool.pricingLabel,
 
