@@ -154,6 +154,12 @@ export const getToolBySlug = async (toolSlug) => {
     )
     .lean();
 
+  if (!toolContent) {
+    const error = new Error("toolContent not found");
+    error.status = 404;
+    throw error;
+  }
+
   const transformedTool = {
     _id: tool._id,
     name: tool.name,
