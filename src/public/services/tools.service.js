@@ -167,6 +167,7 @@ export const getToolBySlug = async (toolSlug) => {
     brand: tool.brand,
     link: tool.link,
     globalDescription: tool.globalDescription,
+    ProductDescription: tool.ProductDescription,
     whatIsIt: tool.whatIsIt,
     pricingLabel: tool.pricingLabel,
 

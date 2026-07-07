@@ -1,82 +1,114 @@
-import {
-  publicAuthService,
-} from "../services/publicAuth.service.js";
+import { publicAuthService } from "../services/publicAuth.service.js";
 import {
   successResponse,
   errorResponse,
 } from "../../../utils/responseHandler.js";
 
-const getPublicUserId = (req) =>
-  req.publicUser?.id ||
-  req.publicUser?._id ||
-  req.publicAuth?.userId;
+import { sendAuthResponse } from "../utils/authResponse.helper.js";
+import { clearAuthCookies } from "../utils/cookie.helper.js";
 
-const getPublicSessionId = (req) =>
-  req.publicSession?.id ||
-  req.publicSession?._id ||
-  req.publicAuth?.sessionId;
-
+/**
+ * Ensures the request contains a valid public authentication context.
+ *
+ * This middleware expects publicAuth.middleware.js
+ * to populate req.publicAuth.
+ */
 const requirePublicContext = (req) => {
-  const userId = getPublicUserId(req);
-  const sessionId = getPublicSessionId(req);
+  if (!req.publicAuth) {
+    const error = new Error("Authentication required");
+    error.status = 401;
+    throw error;
+  }
 
-  if (!userId) {
-    const error = new Error("Public authentication required");
+  const { user, session, token } = req.publicAuth;
+
+  if (!user || !session || !token) {
+    const error = new Error("Invalid authentication context");
     error.status = 401;
     throw error;
   }
 
   return {
-    userId,
-    sessionId,
+    user,
+    session,
+    token,
+    userId: String(user._id),
+    sessionId: String(session._id),
+    role: token.role,
   };
 };
 
+/**
+ * POST /google
+ */
 export const authenticateWithGoogle = async (req, res) => {
   try {
-    const result = await publicAuthService.authenticateWithGoogle(
-      req.body.credential
-    );
+    const result =
+      await publicAuthService.authenticateWithGoogle(
+        req.body.credential,
+        {
+          ipAddress: req.ip,
+          userAgent: req.get("user-agent"),
+        }
+      );
 
-    return successResponse(
+    return sendAuthResponse(
+      req,
       res,
-      "Google authentication successful",
       result,
-      200
+      "Google authentication successful"
     );
   } catch (error) {
-    return errorResponse(res, error.message, error.status || 500);
+    return errorResponse(
+      res,
+      error.message,
+      error.status || 500
+    );
   }
 };
 
+/**
+ * POST /refresh
+ */
 export const refreshSession = async (req, res) => {
   try {
+    const refreshToken = req.cookies.public_refresh_token;
+
     const result = await publicAuthService.refreshSession(
-      req.body.refreshToken
+      refreshToken,
+      {
+        ipAddress: req.ip,
+        userAgent: req.get("user-agent"),
+      }
     );
 
-    return successResponse(
+    return sendAuthResponse(
+      req,
       res,
-      "Session refreshed successfully",
       result,
-      200
+      "Session refreshed successfully"
     );
   } catch (error) {
-    return errorResponse(res, error.message, error.status || 500);
+    return errorResponse(
+      res,
+      error.message,
+      error.status || 500
+    );
   }
 };
 
+/**
+ * POST /logout
+ */
 export const logoutCurrentDevice = async (req, res) => {
   try {
     const { sessionId } = requirePublicContext(req);
 
-    if (!sessionId) {
-      return errorResponse(res, "Public session required", 401);
-    }
-
-    const result = await publicAuthService.logoutCurrentDevice(
-      sessionId
-    );
+    const result =
+      await publicAuthService.logoutCurrentDevice(
+        sessionId
+      );
+      clearAuthCookies(res);
 
     return successResponse(
       res,
@@ -85,15 +117,26 @@ export const logoutCurrentDevice = async (req, res) => {
       200
     );
   } catch (error) {
-    return errorResponse(res, error.message, error.status || 500);
+    return errorResponse(
+      res,
+      error.message,
+      error.status || 500
+    );
   }
 };
 
+/**
+ * POST /logout-all
+ */
 export const logoutAllDevices = async (req, res) => {
   try {
     const { userId } = requirePublicContext(req);
 
-    const result = await publicAuthService.logoutAllDevices(userId);
+    const result =
+      await publicAuthService.logoutAllDevices(
+        userId
+      );
+      clearAuthCookies(res);
 
     return successResponse(
       res,
@@ -102,15 +145,23 @@ export const logoutAllDevices = async (req, res) => {
       200
     );
   } catch (error) {
-    return errorResponse(res, error.message, error.status || 500);
+    return errorResponse(
+      res,
+      error.message,
+      error.status || 500
+    );
   }
 };
 
+/**
+ * GET /profile
+ */
 export const getProfile = async (req, res) => {
   try {
     const { userId } = requirePublicContext(req);
 
-    const result = await publicAuthService.getProfile(userId);
+    const result =
+      await publicAuthService.getProfile(userId);
 
     return successResponse(
       res,
@@ -119,6 +170,10 @@ export const getProfile = async (req, res) => {
       200
     );
   } catch (error) {
-    return errorResponse(res, error.message, error.status || 500);
+    return errorResponse(
+      res,
+      error.message,
+      error.status || 500
+    );
   }
 };
