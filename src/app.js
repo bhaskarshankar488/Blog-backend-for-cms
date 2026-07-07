@@ -1,6 +1,8 @@
 import dotenv from "dotenv";
 dotenv.config();
 
+import cookieParser from "cookie-parser";
+
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
@@ -18,10 +20,14 @@ import toolContentRoutes from "./routes/toolContent.routes.js";
 
 import Alternative from "./feature/alternative/alternative.routes.js";
 
+import publicAuthRoutes from "./modules/public-auth/routes/publicAuth.routes.js";
+
 
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:5173",
+   "https://localhost",
+  "https://localhost:5173",
   process.env.FRONTEND_URL_CMS,
 ];
 
@@ -41,6 +47,8 @@ app.use(cors({
 }));
 
 app.use(express.json());
+
+app.use(cookieParser());
 
 app.use(sessionMiddleware);
 
@@ -74,6 +82,11 @@ app.use("/api/alternatve", Alternative);
 app.use(
   "/api/public",
   publicRoutes, toolPublicRoutes,
+);
+
+app.use(
+  "/api/v1/public/auth",
+  publicAuthRoutes
 );
 
 export default app;
