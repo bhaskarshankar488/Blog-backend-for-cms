@@ -29,6 +29,7 @@ const allowedOrigins = [
    "https://localhost",
   "https://localhost:5173",
   process.env.FRONTEND_URL_CMS,
+  process.env.FRONTEND_URL_MAIN,
 ];
 
 const app = express();
