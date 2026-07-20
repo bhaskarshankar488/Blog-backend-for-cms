@@ -127,7 +127,7 @@ export class AuthProviderRepository {
       authProviderId,
       { disconnectedAt },
       {
-        new: true,
+       returnDocument: "after",
         runValidators: true,
       }
     );
@@ -145,7 +145,7 @@ export class AuthProviderRepository {
       authProviderId,
       { lastUsedAt },
       {
-        new: true,
+        returnDocument: "after",
         runValidators: true,
       }
     );

@@ -87,7 +87,7 @@ export class PublicUserRepository {
       publicUserId,
       updateData,
       {
-        new: true,
+        returnDocument: "after",
         runValidators: true,
       }
     );

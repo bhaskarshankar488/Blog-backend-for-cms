@@ -110,7 +110,7 @@ export class DeviceSessionRepository {
         revokedReason,
       },
       {
-        new: true,
+        returnDocument: "after",
         runValidators: true,
       }
     );
@@ -171,7 +171,7 @@ export class DeviceSessionRepository {
         replacedBySessionId: replacementSession._id,
       },
       {
-        new: true,
+        returnDocument: "after",
         runValidators: true,
       }
     );
