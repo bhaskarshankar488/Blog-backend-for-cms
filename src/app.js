@@ -8,25 +8,27 @@ import cors from "cors";
 import morgan from "morgan";
 import userRoutes from "./routes/user.routes.js";
 import loginRoutes from "./routes/auth.routes.js";
-import toolRoutes from "./routes/tool.routes.js";  
-import pageRoutes from "./routes/page.routes.js"; 
-import revalidateRoutes from "./routes/revalidate.routes.js";  
-import { sessionMiddleware} from "./config/session.js";
+import toolRoutes from "./routes/tool.routes.js";
+import pageRoutes from "./routes/page.routes.js";
+import revalidateRoutes from "./routes/revalidate.routes.js";
+import { sessionMiddleware } from "./config/session.js";
 import categoryRoutes from "./routes/category.routes.js";
 import publicRoutes from "./public/routes/Categories.routes.js";
 import toolPublicRoutes from "./public/routes/tools.route.js";
 
-import toolContentRoutes from "./routes/toolContent.routes.js"; 
+import toolContentRoutes from "./routes/toolContent.routes.js";
 
 import Alternative from "./feature/alternative/alternative.routes.js";
 
 import publicAuthRoutes from "./modules/public-auth/routes/publicAuth.routes.js";
 
+import toolReviewRoutes from "./modules/tool-review/routes/toolReview.routes.js";
+
 
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:5173",
-   "https://localhost",
+  "https://localhost",
   "https://localhost:5173",
   process.env.FRONTEND_URL_CMS,
   process.env.FRONTEND_URL_MAIN,
@@ -64,10 +66,10 @@ app.get("/", (req, res) => {
 // Routes
 app.use("/api/users", userRoutes);
 app.use("/api/auth", loginRoutes);
-app.use("/api/tools", toolRoutes);   
+app.use("/api/tools", toolRoutes);
 app.use("/api/pages", pageRoutes);
-app.use("/api/categories", categoryRoutes); 
-app.use("/api/revalidate", revalidateRoutes); 
+app.use("/api/categories", categoryRoutes);
+app.use("/api/revalidate", revalidateRoutes);
 
 app.use(
   "/api/tool-content",
@@ -89,5 +91,7 @@ app.use(
   "/api/v1/public/auth",
   publicAuthRoutes
 );
+
+app.use("/api/v1/public/tools", toolReviewRoutes);
 
 export default app;

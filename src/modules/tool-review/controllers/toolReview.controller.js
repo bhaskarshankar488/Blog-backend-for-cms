@@ -1,0 +1,87 @@
+import mongoose from "mongoose";
+import { ToolReview } from "../../../models/toolReview.model.js";
+import {
+    successResponse,
+    errorResponse,
+} from "../../../utils/responseHandler.js";
+
+export const createToolReview = async (req, res) => {
+    try {
+        const { toolId } = req.params;
+        const { rating, comment } = req.body;
+        //const userId = req.publicAuth.userId;
+        const userId = "6a4d1f8d04f9b7424b52638d";
+
+        // Validate toolId is a valid ObjectId
+        if (!mongoose.Types.ObjectId.isValid(toolId)) {
+            return errorResponse(res, "Invalid tool ID", 400);
+        }
+
+        // Check if user already reviewed this tool
+        const existing = await ToolReview.findOne({ toolId, userId });
+        if (existing) {
+            return errorResponse(
+                res,
+                "You have already submitted a review for this tool",
+                409
+            );
+        }
+
+        const review = await ToolReview.create({
+            userId,
+            toolId,
+            rating,
+            comment,
+        });
+
+        return res.status(201).json({
+            success: true,
+            message: "Review submitted successfully",
+        });
+    } catch (error) {
+        return errorResponse(res, error.message || "Failed to submit review", 500);
+    }
+};
+
+export const updateToolReview = async (req, res) => {
+    try {
+        const { toolId } = req.params;
+        const { rating, comment } = req.body;
+        //const userId = req.publicAuth.userId;
+        const userId = "6a4d1f8d04f9b7424b52638d";
+
+        if (!mongoose.Types.ObjectId.isValid(toolId)) {
+            return errorResponse(res, "Invalid tool ID", 400);
+        }
+
+        // Check if user already reviewed this tool
+        const review = await ToolReview.findOneAndUpdate(
+            { toolId, userId },
+            { rating, comment },
+            {
+                new: true,
+                runValidators: true,
+            }
+        ).populate("userId", "displayName avatarUrl");
+
+        if (!review) {
+            return errorResponse(res, "Review does not exist", 404);
+        }
+
+        const response = {
+            id: review._id,
+            rating: review.rating,
+            comment: review.comment,
+            createdAt: review.createdAt,
+            user: {
+                id: review.userId._id,
+                name: review.userId.displayName,
+                profilePicture: review.userId.avatarUrl,
+            },
+        };
+
+        return successResponse(res, "Review updated successfully", response, 200);
+    } catch (error) {
+        return errorResponse(res, error.message || "Failed to update review", 500);
+    }
+};
