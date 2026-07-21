@@ -1,5 +1,5 @@
 import express from "express";
-import { createToolReview, updateToolReview } from "../controllers/toolReview.controller.js";
+import { createToolReview, updateToolReview, getToolReviews } from "../controllers/toolReview.controller.js";
 import { validate } from "../../../middlewares/validate.middleware.js";
 import { createReviewSchema } from "../validators/toolReview.validator.js";
 import publicAuthMiddleware from "../../public-auth/middleware/publicAuth.middleware.js";
@@ -22,6 +22,8 @@ router.put(
     validate(createReviewSchema),
     updateToolReview
 );
+
+router.get("/:toolId/reviews", getToolReviews);
 
 export default router;
 

@@ -85,3 +85,58 @@ export const updateToolReview = async (req, res) => {
         return errorResponse(res, error.message || "Failed to update review", 500);
     }
 };
+
+export const getToolReviews = async (req, res) => {
+    try {
+        const { toolId } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(toolId)) {
+            return errorResponse(res, "Invalid tool ID", 400);
+        }
+
+        //run parallel db operation to fetch reviews and stats
+        const [toolReviews, reviewStats] = await Promise.all([
+            ToolReview.find({ toolId })
+                .populate("userId", "displayName avatarUrl")
+                .sort({ createdAt: -1 })
+                .lean(),
+
+            ToolReview.aggregate([
+                {
+                    $match: {
+                        toolId: new mongoose.Types.ObjectId(toolId),
+                    },
+                },
+                {
+                    $group: {
+                        _id: null,
+                        averageRating: { $avg: "$rating" },
+                        totalReviews: { $sum: 1 },
+                    },
+                },
+            ]),
+        ]);
+
+        const transformedReviews = toolReviews.map(review => ({
+            id: review._id,
+            rating: review.rating,
+            comment: review.comment,
+            createdAt: review.createdAt,
+            user: {
+                id: review.userId._id,
+                name: review.userId.displayName,
+                profilePicture: review.userId.avatarUrl,
+            },
+        }));
+
+        const response = {
+            averageRating: reviewStats[0]?.averageRating ?? 0,
+            totalReviews: reviewStats[0]?.totalReviews ?? 0,
+            reviews: transformedReviews,
+        };
+
+        return successResponse(res, "Tool reviews fetched successfully", response, 200);
+    } catch (error) {
+        return errorResponse(res, error.message || "Failed to fetch tool reviews", 500);
+    }
+};
