@@ -9,8 +9,7 @@ export const createToolReview = async (req, res) => {
     try {
         const { toolId } = req.params;
         const { rating, comment } = req.body;
-        //const userId = req.publicAuth.userId;
-        const userId = "6a4d1f8d04f9b7424b52638d";
+        const userId = req.publicAuth.userId;
 
         // Validate toolId is a valid ObjectId
         if (!mongoose.Types.ObjectId.isValid(toolId)) {
@@ -34,10 +33,7 @@ export const createToolReview = async (req, res) => {
             comment,
         });
 
-        return res.status(201).json({
-            success: true,
-            message: "Review submitted successfully",
-        });
+        return successResponse(res, "Review submitted successfully", {}, 201);
     } catch (error) {
         return errorResponse(res, error.message || "Failed to submit review", 500);
     }
@@ -47,8 +43,7 @@ export const updateToolReview = async (req, res) => {
     try {
         const { toolId } = req.params;
         const { rating, comment } = req.body;
-        //const userId = req.publicAuth.userId;
-        const userId = "6a4d1f8d04f9b7424b52638d";
+        const userId = req.publicAuth.userId;
 
         if (!mongoose.Types.ObjectId.isValid(toolId)) {
             return errorResponse(res, "Invalid tool ID", 400);
