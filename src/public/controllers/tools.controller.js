@@ -49,8 +49,8 @@ export const getToolBySlug = async (req, res) => {
 
     return successResponse(
       res,
-      result.data,
-      result.message
+      result.message,
+      result.data
     );
   } catch (error) {
     return errorResponse(

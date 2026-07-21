@@ -1,6 +1,7 @@
 import { Tool } from "../../models/tool.model.js";
 import { ToolContent } from "../../models/toolContent.model.js";
 import { Category } from "../../models/category.model.js";
+import { ToolReview } from "../../models/toolReview.model.js";
 
 export const getTools = async ({
   page = 1,
@@ -160,6 +161,45 @@ export const getToolBySlug = async (toolSlug) => {
     throw error;
   }
 
+  const toolReviews = await ToolReview.find({
+    toolId: tool._id,
+  })
+    .populate("userId", "displayName avatarUrl")
+    .lean();
+
+  const reviewStats = await ToolReview.aggregate([
+    {
+      $match: {
+        toolId: tool._id,
+      },
+    },
+    {
+      $group: {
+        _id: "$toolId",
+        averageRating: { $avg: "$rating" },
+        totalReviews: { $sum: 1 },
+      },
+    },
+  ]);
+
+  const transformedReviews = toolReviews.map((review) => ({
+    id: review._id,
+    rating: review.rating,
+    comment: review.comment,
+    createdAt: review.createdAt,
+    user: {
+      id: review.userId._id,
+      name: review.userId.displayName,
+      profilePicture: review.userId.avatarUrl,
+    },
+  }));
+
+  const finalTransformedReviews = {
+    averageRating: reviewStats[0]?.averageRating,
+    totalReviews: reviewStats[0]?.totalReviews,
+    items: transformedReviews,
+  };
+
   const transformedTool = {
     _id: tool._id,
     name: tool.name,
@@ -212,6 +252,7 @@ export const getToolBySlug = async (toolSlug) => {
     data: {
       tool: transformedTool,
       content: transformedContent,
+      reviews: finalTransformedReviews,
     },
   };
 };
