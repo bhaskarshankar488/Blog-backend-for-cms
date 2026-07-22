@@ -24,6 +24,8 @@ const toolReviewSchema = new mongoose.Schema(
         comment: {
             type: String,
             required: true,
+            min: 1,
+            max: 1000,
             trim: true,
         },
     },
