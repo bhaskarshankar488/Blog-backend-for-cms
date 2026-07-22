@@ -8,22 +8,21 @@ import {
 
 export const createToolReview = async (req, res) => {
     try {
-        const { toolId } = req.params;
+        const { toolSlug } = req.params;
         const { rating, comment } = req.body;
         const userId = req.publicAuth.userId;
 
-        // Validate toolId is a valid ObjectId
-        if (!mongoose.Types.ObjectId.isValid(toolId)) {
-            return errorResponse(res, "Invalid tool ID", 400);
+        if (!toolSlug) {
+            return errorResponse(res, "Tool slug is required", 400);
         }
 
-        const checkToolExist = await Tool.findOne({ _id: toolId });
+        const checkToolExist = await Tool.findOne({ slug: toolSlug });
         if (!checkToolExist) {
-            return errorResponse(res, "Tool does not exist", 404);
+            return errorResponse(res, "Tool not found", 404);
         }
 
         // Check if user already reviewed this tool
-        const existing = await ToolReview.findOne({ toolId, userId });
+        const existing = await ToolReview.findOne({ toolId: checkToolExist._id, userId });
         if (existing) {
             return errorResponse(
                 res,
@@ -34,7 +33,7 @@ export const createToolReview = async (req, res) => {
 
         const review = await ToolReview.create({
             userId,
-            toolId,
+            toolId: checkToolExist._id,
             rating,
             comment,
         });
@@ -47,17 +46,22 @@ export const createToolReview = async (req, res) => {
 
 export const updateToolReview = async (req, res) => {
     try {
-        const { toolId } = req.params;
+        const { toolSlug } = req.params;
         const { rating, comment } = req.body;
         const userId = req.publicAuth.userId;
 
-        if (!mongoose.Types.ObjectId.isValid(toolId)) {
-            return errorResponse(res, "Invalid tool ID", 400);
+        if (!toolSlug) {
+            return errorResponse(res, "Tool slug is required", 400);
+        }
+
+        const checkToolExist = await Tool.findOne({ slug: toolSlug });
+        if (!checkToolExist) {
+            return errorResponse(res, "Tool not found", 404);
         }
 
         // Check if user already reviewed this tool
-        const review = await ToolReview.findOneAndUpdate(
-            { toolId, userId },
+        const updatedReview = await ToolReview.findOneAndUpdate(
+            { toolId: checkToolExist._id, userId },
             { rating, comment },
             {
                 new: true,
@@ -65,19 +69,19 @@ export const updateToolReview = async (req, res) => {
             }
         ).populate("userId", "displayName avatarUrl");
 
-        if (!review) {
+        if (!updatedReview) {
             return errorResponse(res, "Review does not exist", 404);
         }
 
         const response = {
-            id: review._id,
-            rating: review.rating,
-            comment: review.comment,
-            createdAt: review.createdAt,
+            id: updatedReview._id,
+            rating: updatedReview.rating,
+            comment: updatedReview.comment,
+            createdAt: updatedReview.createdAt,
             user: {
-                id: review.userId._id,
-                name: review.userId.displayName,
-                profilePicture: review.userId.avatarUrl,
+                id: updatedReview.userId._id,
+                name: updatedReview.userId.displayName,
+                profilePicture: updatedReview.userId.avatarUrl,
             },
         };
 
@@ -89,15 +93,20 @@ export const updateToolReview = async (req, res) => {
 
 export const getToolReviews = async (req, res) => {
     try {
-        const { toolId } = req.params;
+        const { toolSlug } = req.params;
 
-        if (!mongoose.Types.ObjectId.isValid(toolId)) {
-            return errorResponse(res, "Invalid tool ID", 400);
+        if (!toolSlug) {
+            return errorResponse(res, "Tool slug is required", 400);
+        }
+
+        const checkToolExist = await Tool.findOne({ slug: toolSlug });
+        if (!checkToolExist) {
+            return errorResponse(res, "Tool not found", 404);
         }
 
         //run parallel db operation to fetch reviews and stats
         const [toolReviews, reviewStats] = await Promise.all([
-            ToolReview.find({ toolId })
+            ToolReview.find({ toolId: checkToolExist._id })
                 .populate("userId", "displayName avatarUrl")
                 .sort({ createdAt: -1 })
                 .lean(),
@@ -105,7 +114,7 @@ export const getToolReviews = async (req, res) => {
             ToolReview.aggregate([
                 {
                     $match: {
-                        toolId: new mongoose.Types.ObjectId(toolId),
+                        toolId: new mongoose.Types.ObjectId(checkToolExist._id),
                     },
                 },
                 {

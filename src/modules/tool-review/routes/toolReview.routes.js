@@ -8,7 +8,7 @@ import accountStatusMiddleware from "../../public-auth/middleware/accountStatus.
 const router = express.Router();
 
 router.post(
-    "/:toolId/reviews",
+    "/:toolSlug/reviews",
     publicAuthMiddleware,
     accountStatusMiddleware,
     validate(createReviewSchema),
@@ -16,14 +16,14 @@ router.post(
 );
 
 router.put(
-    "/:toolId/reviews",
+    "/:toolSlug/reviews",
     publicAuthMiddleware,
     accountStatusMiddleware,
     validate(updateReviewSchema),
     updateToolReview
 );
 
-router.get("/:toolId/reviews", getToolReviews);
+router.get("/:toolSlug/reviews", getToolReviews);
 
 export default router;
 
