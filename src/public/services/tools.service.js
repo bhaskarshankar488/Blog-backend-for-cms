@@ -195,8 +195,8 @@ export const getToolBySlug = async (toolSlug) => {
   }));
 
   const finalTransformedReviews = {
-    averageRating: reviewStats[0]?.averageRating,
-    totalReviews: reviewStats[0]?.totalReviews,
+    averageRating: reviewStats[0]?.averageRating ?? 0,
+    totalReviews: reviewStats[0]?.totalReviews ?? 0,
     items: transformedReviews,
   };
 
