@@ -38,7 +38,21 @@ export const createToolReview = async (req, res) => {
             comment,
         });
 
-        return successResponse(res, "Review submitted successfully", {}, 201);
+        await review.populate("userId", "displayName avatarUrl");
+
+        const response = {
+            id: review._id,
+            rating: review.rating,
+            comment: review.comment,
+            createdAt: review.createdAt,
+            user: {
+                id: review.userId._id,
+                name: review.userId.displayName,
+                profilePicture: review.userId.avatarUrl,
+            },
+        };
+
+        return successResponse(res, "Review submitted successfully", response, 201);
     } catch (error) {
         return errorResponse(res, error.message || "Failed to submit review", 500);
     }
