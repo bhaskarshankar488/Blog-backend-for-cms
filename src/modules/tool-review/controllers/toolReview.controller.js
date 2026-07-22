@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { ToolReview } from "../../../models/toolReview.model.js";
+import { Tool } from "../../../models/tool.model.js";
 import {
     successResponse,
     errorResponse,
@@ -14,6 +15,11 @@ export const createToolReview = async (req, res) => {
         // Validate toolId is a valid ObjectId
         if (!mongoose.Types.ObjectId.isValid(toolId)) {
             return errorResponse(res, "Invalid tool ID", 400);
+        }
+
+        const checkToolExist = await Tool.findOne({ _id: toolId });
+        if (!checkToolExist) {
+            return errorResponse(res, "Tool does not exist", 404);
         }
 
         // Check if user already reviewed this tool
