@@ -161,43 +161,56 @@ export const getToolBySlug = async (toolSlug) => {
     throw error;
   }
 
-  const toolReviews = await ToolReview.find({
-    toolId: tool._id,
-  })
-    .populate("userId", "displayName avatarUrl")
-    .lean();
-
-  const reviewStats = await ToolReview.aggregate([
+  const reviewSummary = await ToolReview.aggregate([
     {
       $match: {
         toolId: tool._id,
       },
     },
     {
-      $group: {
-        _id: "$toolId",
-        averageRating: { $avg: "$rating" },
-        totalReviews: { $sum: 1 },
+      $facet: {
+        stats: [
+          {
+            $group: {
+              _id: null,
+              averageRating: { $avg: "$rating" },
+              totalReviews: { $sum: 1 },
+            },
+          },
+        ],
+        breakdown: [
+          {
+            $group: {
+              _id: "$rating",
+              count: { $sum: 1 },
+            },
+          },
+        ],
       },
     },
   ]);
 
-  const transformedReviews = toolReviews.map((review) => ({
-    id: review._id,
-    rating: review.rating,
-    comment: review.comment,
-    createdAt: review.createdAt,
-    user: {
-      id: review.userId._id,
-      name: review.userId.displayName,
-      profilePicture: review.userId.avatarUrl,
-    },
-  }));
+  const stats = reviewSummary[0].stats[0] || {
+    averageRating: 0,
+    totalReviews: 0,
+  };
 
-  const finalTransformedReviews = {
-    averageRating: reviewStats[0]?.averageRating ?? 0,
-    totalReviews: reviewStats[0]?.totalReviews ?? 0,
-    items: transformedReviews,
+  const ratingBreakdown = {
+    5: 0,
+    4: 0,
+    3: 0,
+    2: 0,
+    1: 0,
+  };
+
+  reviewSummary[0].breakdown.forEach(({ _id, count }) => {
+    ratingBreakdown[_id] = count;
+  });
+
+  const finalReviewSummary = {
+    averageRating: Number(stats.averageRating.toFixed(1)),
+    totalReviews: stats.totalReviews,
+    ratingBreakdown,
   };
 
   const transformedTool = {
@@ -252,7 +265,7 @@ export const getToolBySlug = async (toolSlug) => {
     data: {
       tool: transformedTool,
       content: transformedContent,
-      reviews: finalTransformedReviews,
+      reviews: finalReviewSummary,
     },
   };
 };
