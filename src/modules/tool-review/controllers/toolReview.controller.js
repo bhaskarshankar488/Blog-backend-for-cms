@@ -118,27 +118,36 @@ export const getToolReviews = async (req, res) => {
             return errorResponse(res, "Tool not found", 404);
         }
 
+        const page = Math.max(parseInt(req.query.page) || 1, 1);
+        const limit = Math.min(parseInt(req.query.limit) || 10, 50);
+        const skip = (page - 1) * limit;
+
         //run parallel db operation to fetch reviews and stats
-        const [toolReviews, reviewStats] = await Promise.all([
+        const [toolReviews, reviewStats, totalCount] = await Promise.all([
             ToolReview.find({ toolId: checkToolExist._id })
                 .populate("userId", "displayName avatarUrl")
                 .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limit)
                 .lean(),
 
             ToolReview.aggregate([
                 {
                     $match: {
-                        toolId: new mongoose.Types.ObjectId(checkToolExist._id),
+                        toolId: checkToolExist._id,
                     },
                 },
                 {
                     $group: {
                         _id: null,
                         averageRating: { $avg: "$rating" },
-                        totalReviews: { $sum: 1 },
                     },
                 },
             ]),
+
+            ToolReview.countDocuments({
+                toolId: checkToolExist._id,
+            }),
         ]);
 
         const transformedReviews = toolReviews.map(review => ({
@@ -147,15 +156,24 @@ export const getToolReviews = async (req, res) => {
             comment: review.comment,
             createdAt: review.createdAt,
             user: {
-                id: review.userId._id,
-                name: review.userId.displayName,
-                profilePicture: review.userId.avatarUrl,
+                id: review.userId._id ?? "",
+                name: review.userId.displayName ?? "",
+                profilePicture: review.userId.avatarUrl ?? "",
             },
         }));
 
         const response = {
             averageRating: reviewStats[0]?.averageRating ?? 0,
-            totalReviews: reviewStats[0]?.totalReviews ?? 0,
+            totalReviews: totalCount,
+
+            pagination: {
+                page,
+                limit,
+                totalPages: Math.ceil(totalCount / limit),
+                hasNextPage: page * limit < totalCount,
+                hasPreviousPage: page > 1,
+            },
+
             reviews: transformedReviews,
         };
 
