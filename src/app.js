@@ -24,11 +24,13 @@ import publicAuthRoutes from "./modules/public-auth/routes/publicAuth.routes.js"
 
 import toolReviewRoutes from "./modules/tool-review/routes/toolReview.routes.js";
 
+import subscriptionRouter from "../src/modules/email-subscription/routes/subscribe.route.js"
+
 
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:5173",
-  "https://localhost",
+  "http://localhost:5500",
   "https://localhost:5173",
   process.env.FRONTEND_URL_CMS,
   process.env.FRONTEND_URL_MAIN,
@@ -93,5 +95,7 @@ app.use(
 );
 
 app.use("/api/v1/public/tools", toolReviewRoutes);
+
+app.use('/api/v1/public', subscriptionRouter);
 
 export default app;
