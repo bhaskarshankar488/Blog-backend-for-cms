@@ -26,6 +26,8 @@ import toolReviewRoutes from "./modules/tool-review/routes/toolReview.routes.js"
 
 import subscriptionRouter from "../src/modules/email-subscription/routes/subscribe.route.js"
 
+import registerAdminRoutes from "./Admin/routes.js";
+
 
 const allowedOrigins = [
   "http://localhost:3000",
@@ -80,6 +82,7 @@ app.use(
 
 app.use("/api/alternatve", Alternative);
 
+registerAdminRoutes(app);
 
 
 //public rooute

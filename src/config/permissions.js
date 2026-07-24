@@ -5,6 +5,7 @@ export const PERMISSIONS = {
     pages: ["create", "read", "update", "delete"],   // ✅ ADD
     categories: ["create", "read", "update", "delete"], // ✅ ADD
     finance: ["create", "read", "update", "delete"],
+    subscribers: ["create", "read", "update", "delete"],
   },
 
   analyst: {
